@@ -79,5 +79,4 @@ PF21787 TNP-like, RNase H N-terminal domain
 PF21788 TNP-like, GTP-binding insertion domain
 PF21789 TNP-like, RNase H C-terminal domain
 PF22936 Pol polyprotein, beta-barrel domain
-PF23309 Domain of unknown function (DUF7083)
 PF24626 Tf2-1-like, SH3 domain
