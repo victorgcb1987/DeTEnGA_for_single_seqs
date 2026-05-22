@@ -11,7 +11,7 @@ def _group_sequences(sequences, out_fpaths):
     mrnas = {"viridiplantae": out_fpaths["mrna_viridiplantae"],
              "metazoa": out_fpaths["mrna_metazoa"],
              "fungi": out_fpaths["mrna_fungi"],
-             "other": out_fpaths["mrna_ohter"]}
+             "other": out_fpaths["mrna_other"]}
     fhands = {taxa: open(fpath, "w") for taxa, fpath in mrnas.items()}
     for hog, members in sequences.items():
         for member in members:
