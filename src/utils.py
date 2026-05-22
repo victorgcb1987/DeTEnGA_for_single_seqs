@@ -40,6 +40,7 @@ def select_longest_isoform(sequence_dir, protein_sequence, mrna_sequence):
     if len(protein_sequences_lengths) == 1:
         print(protein_sequence, mrna_sequence)
         #Sometimes, for only one protein can appear 2 or more transcripts
+        #we are goin to get the first one that is coding (starts with XM)
         records = SeqIO.parse(mrna_sequence, "fasta")
         for record in records:
             if record.id.startswith("XM"):
