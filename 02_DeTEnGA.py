@@ -161,7 +161,7 @@ def main():
 
 
             msg = f'Protein {member["proteinID"]}: merging evidences from Interpro and TEsorter'
-            emit_message(msg)
+            emit_message(msg, log_fhand)
     
             database = REXDB_PFAMS[database]
             TE_pfams = get_pfams_from_db(database)
