@@ -12,6 +12,7 @@ def _group_sequences(sequences, out_fpaths):
             kingdom = mode.split("_")
             with open(out_fpath, "w") as out_fhand:
                 for hog, members in sequences.items():
+                    print(member)
                     for member in members:
                         if member["Kingdom"] == mode:
                             record = SeqIO.read(member["mrna"], "fasta")
