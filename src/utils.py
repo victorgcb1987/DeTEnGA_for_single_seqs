@@ -63,10 +63,10 @@ def select_longest_isoform(sequence_dir, protein_sequence, mrna_sequence):
         with open(longest_mrna_path, "w") as mrna_out_fhand:
             records = SeqIO.parse(mrna_sequence, "fasta")
             for record in records:
-                if transcript in record.id:
+                if transcript in record.description:
                     SeqIO.write(record, mrna_out_fhand, "fasta")
-                    mrnaid = record.id
-        return longest_prot_path, longest_mrna_path, mrnaid, prot_id
+                    mrna_id = record.id
+        return longest_prot_path, longest_mrna_path, mrna_id, prot_id
 
 
 def search_sequences(metadata, input_dir):
