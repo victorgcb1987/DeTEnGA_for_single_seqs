@@ -158,7 +158,7 @@ def main():
             elif interpro_results["returncode"] == 0:
                 msg = f'InteproScan succesfully run for {member["proteinID"]}.'
             else:
-                msg = f'InteproScan failed for protein {member["proteinID"]}: {interpro_results[msg]}'
+                msg = f'InteproScan failed for protein {member["proteinID"]}: {interpro_results["msg"]}'
             emit_message(msg, log_fhand)
             print(interpro_results["returncode"])
             if interpro_results["returncode"] == 1:
