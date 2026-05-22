@@ -144,7 +144,7 @@ def main():
             emit_message(msg, log_fhand)
             
             stop_codons_results = remove_stop_codons(member["protein"])
-            msg = f'Protein {member["proteinID"]}: '
+            msg = f'Protein {member["proteinID"]}: {stop_codons_results["msg"]}'
             msg += stop_codons_results["msg"]
             emit_message(msg, log_fhand)
        
@@ -153,8 +153,12 @@ def main():
             msg = "Analyze protein domains with interproscan"
             emit_message(msg, log_fhand)
             interpro_results = run_interpro(stop_codons_results["out_fpath"], args["threads"])
-            msg = f'Protein {member["proteinID"]}: '
-            msg += interpro_results["msg"]
+            if interpro_results["returncode"] == 99:
+                msg = f'InterproScan already done for {member["proteinID"]}. Skipping Interpro analysis'
+            elif interpro_results["returncode"] == 0:
+                msg = f'InteproScan succesfully run for {member["proteinID"]}.'
+            else:
+                msg = f'InteproScan failed for protein {member["proteinID"]}: {interpro_results["msg"]}'
             emit_message(msg, log_fhand)
             if interpro_results["returncode"] == 1:
                 continue
