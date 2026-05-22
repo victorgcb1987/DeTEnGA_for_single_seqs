@@ -23,7 +23,7 @@ def generate_input_files(sequences, out_fpath):
     mrna_out_metazoa = out_fpath / "mrna_metazoa_sequences.fna"
     mrna_out_other = out_fpath / "mrna_other_sequences.fna"
     prot_out = out_fpath / "protein_sequences.faa"
-    outs = {"proteins": prot_out,
+    outs = {"protein": prot_out,
             "mrna_viridiplantae": mrna_out_viridiplantae,
             "mrna_metazoa": mrna_out_metazoa,
             "mrna_other": mrna_out_other}
@@ -47,6 +47,7 @@ def select_longest_isoform(sequence_dir, protein_sequence, mrna_sequence):
                 mrna_id = record.id
                 break
         return protein_sequence, mrna_sequence, mrna_id
+    
     else:
         longest_isoform = protein_sequences_lengths.index(max(protein_sequences_lengths))
         longest_prot_path = sequence_dir / "protein_longest_isoform.faa"
