@@ -59,6 +59,7 @@ def run_TEsorter(input_mrna, database, threads):
         cmd = f'TEsorter {input_mrna.name} -p {threads}'
     else:
         cmd = f'TEsorter {input_mrna.name} -db {database} -p {threads}'
+    print(out_mrna)
     if out_mrna.exists():
         returncode = 99
         msg = "File {} already exists\n".format(str(out_mrna))
