@@ -125,7 +125,7 @@ def run_interpro(sequence, threads):
     
     os.chdir(sequence.parents[0].absolute())
     out_fpath = Path("{}.tsv".format(sequence))
-    log_fpath = Path("{}/interpro.log.txt".format(out_fpath.parents[0]))
+    log_fpath = Path("interpro.log.txt")
     cmd = f'interproscan.sh -i {out_fpath} -cpu {threads} '
     cmd += f'-exclappl {",".join(exclude)} --disable-precalc > {log_fpath}'
     if Path(out_fpath.name).exists():
