@@ -138,7 +138,6 @@ def run_interpro(sequence, threads):
             msg = "InterProScan ran succesfully"
         else:
             msg = run_.stderr.decode()
-    print(cmd)
     interpro_results = {"command": cmd, "msg": msg,
                         "out_fpath": out_fpath, "returncode": returncode}
         
