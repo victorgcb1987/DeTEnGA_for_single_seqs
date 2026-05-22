@@ -58,6 +58,7 @@ def select_longest_isoform(sequence_dir, protein_sequence, mrna_sequence):
             longest_isoform = records[longest_isoform]
             prot_id = longest_isoform.id
             SeqIO.write(longest_isoform, prot_out_fhand, "fasta")
+            print(record.description)
             transcript = f'transcript={record.description.split()[-1].split("=")[-1][:-1]}'
         longest_mrna_path = sequence_dir / "mrna_longest_isoform.fna"
         with open(longest_mrna_path, "w") as mrna_out_fhand:
