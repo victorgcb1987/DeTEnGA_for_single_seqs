@@ -13,6 +13,7 @@ def _group_sequences(sequences, out_fpaths):
             with open(out_fpath, "w") as out_fhand:
                 for hog, members in sequences.items():
                     for member in members:
+                        print(member["kingdom"], mode)
                         if member["kingdom"] == mode:
                             record = SeqIO.read(member["mrna"], "fasta")
                             SeqIO.write(record, out_fhand, "fasta")
