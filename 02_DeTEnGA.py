@@ -145,7 +145,7 @@ def main():
             
             stop_codons_results = remove_stop_codons(member["protein"])
             msg = f'Protein {member["proteinID"]}: '
-            msg += results["msg"]
+            msg += stop_codons_results["msg"]
             emit_message(msg, log_fhand)
        
 
