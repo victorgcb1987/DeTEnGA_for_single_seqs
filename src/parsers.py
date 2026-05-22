@@ -13,7 +13,7 @@ def read_metadata(metadata_fhand):
         prot_metadata = {"proteinID": row["Protein"],
                          "species": row["SpName"],
                          "kingdom": row["Kingdom"],
-                         "category": row["Category"]}
+                         "category": (row["Category"]).lower()}
         if not  hog in metadata:
             metadata[row["HOG"]] = [prot_metadata]
         else:

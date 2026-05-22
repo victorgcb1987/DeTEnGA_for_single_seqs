@@ -11,7 +11,7 @@ from src.parsers import (get_pfams_from_db, get_pfams_from_interpro_query,
                          get_stats, read_metadata)
 from src.run import run_TEsorter, remove_stop_codons, run_interpro, run_agat
 
-from src.utils import search_sequences
+from src.utils import search_sequences, generate_input_files
 
 REXDB_PFAMS = {"rexdb-plant": Path(os.path.dirname(os.path.realpath(__file__))) / "data" / "Viridiplantae_2.0_pfams.txt",
                "rexdb-metazoa": Path(os.path.dirname(os.path.realpath(__file__))) / "data" / "Metazoa_3.1_pfams.txt",
@@ -108,98 +108,92 @@ def main():
         metadata = read_metadata(metadata_fhand)
 
     msg = "Checking if all sequences are avaiable"
-    print(msg)
-    log_fhand.write(msg)
+    emit_message(msg, log_fhand)
     found_sequences, not_found_sequences = search_sequences(metadata, args["input"])
 
+    input_fpaths = generate_input_files(found_sequences, out_dir)
 
-    #Create TEsorter input
-    for hog, members in found_sequences.items():
-        for member in members:
-            print(member)
-            msg = f'Started analysis of {hog}, {member["species"]} protID {member["proteinID"]}'
-            emit_message(msg, log_fhand)
-            msg = "Analising RNA transposable elements with TEsorter"
-            emit_message(msg, log_fhand)
-       
-            if member["kingdom"] == "Viridiplantae":
-                rex_db = "rexdb-plant"
-            elif member["kingdom"] == "Metazoa":
-                rex_db = "rexdb-metazoa"
-            else:
-                rex_db = "rex-db"
-            TEsorter_results = run_TEsorter(member["mrna"], rex_db, args["threads"])
-            if TEsorter_results["returncode"] == 99:
-                msg = f'TEsorter already done for {member["proteinID"]}. Skipping Tesorter analysis'
-            elif TEsorter_results["returncode"] == 0:
-                msg = f'TEsorter succesfully run for {member["proteinID"]}.'
-            else:
-                msg = f'TEsorter failed for protein {member["proteinID"]}'
+
+    # msg = "Analising RNA transposable elements with TEsorter"
+    # emit_message(msg, log_fhand)
+    #         if member["kingdom"] == "Viridiplantae":
+    #             rex_db = "rexdb-plant"
+    #         elif member["kingdom"] == "Metazoa":
+    #             rex_db = "rexdb-metazoa"
+    #         else:
+    #             rex_db = "rex-db"
+    #         TEsorter_results = run_TEsorter(member["mrna"], rex_db, args["threads"])
+    #         if TEsorter_results["returncode"] == 99:
+    #             msg = f'TEsorter already done for {member["proteinID"]}. Skipping Tesorter analysis'
+    #         elif TEsorter_results["returncode"] == 0:
+    #             msg = f'TEsorter succesfully run for {member["proteinID"]}.'
+    #         else:
+    #             msg = f'TEsorter failed for protein {member["proteinID"]}'
             
-            emit_message(msg, log_fhand)
-            if TEsorter_results["returncode"] == 1:
-                continue
+    #         emit_message(msg, log_fhand)
+    #         if TEsorter_results["returncode"] == 1:
+    #             continue
             
-            msg = "Truncating protein sequence at first stop codon"
-            emit_message(msg, log_fhand)
+    #         msg = "Truncating protein sequence at first stop codon"
+    #         emit_message(msg, log_fhand)
             
-            stop_codons_results = remove_stop_codons(member["protein"])
-            msg = f'Protein {member["proteinID"]}: {stop_codons_results["msg"]}'
-            emit_message(msg, log_fhand)
+    #         stop_codons_results = remove_stop_codons(member["protein"])
+    #         msg = f'Protein {member["proteinID"]}: {stop_codons_results["msg"]}'
+    #         emit_message(msg, log_fhand)
        
 
-            #Run interproscan
-            msg = "Analyze protein domains with interproscan"
-            emit_message(msg, log_fhand)
-            interpro_results = run_interpro(stop_codons_results["out_fpath"], args["threads"])
-            if interpro_results["returncode"] == 99:
-                msg = f'InterproScan already done for {member["proteinID"]}. Skipping Interpro analysis'
-            elif interpro_results["returncode"] == 0:
-                msg = f'InteproScan succesfully run for {member["proteinID"]}.'
-            else:
-                msg = f'InteproScan failed for protein {member["proteinID"]}: {interpro_results["msg"]}'
-            emit_message(msg, log_fhand)
-            if interpro_results["returncode"] != 99 or interpro_results["returncode"] != 0:
-                continue
+    #         #Run interproscan
+    #         msg = "Analyze protein domains with interproscan"
+    #         emit_message(msg, log_fhand)
+    #         interpro_results = run_interpro(stop_codons_results["out_fpath"], args["threads"])
+    #         if interpro_results["returncode"] == 99:
+    #             msg = f'InterproScan already done for {member["proteinID"]}. Skipping Interpro analysis'
+    #         elif interpro_results["returncode"] == 0:
+    #             msg = f'InteproScan succesfully run for {member["proteinID"]}.'
+    #         else:
+    #             msg = f'InteproScan failed for protein {member["proteinID"]}: {interpro_results["msg"]}'
+    #         emit_message(msg, log_fhand)
+    #         if interpro_results["returncode"] != 99 or interpro_results["returncode"] != 0:
+    #             continue
 
 
-            msg = f'Protein {member["proteinID"]}: merging evidences from Interpro and TEsorter'
-            emit_message(msg, log_fhand)
+    #         msg = f'Protein {member["proteinID"]}: merging evidences from Interpro and TEsorter'
+    #         emit_message(msg, log_fhand)
     
-            database = REXDB_PFAMS[database]
-            TE_pfams = get_pfams_from_db(database)
+    #         database = REXDB_PFAMS[database]
+    #         TE_pfams = get_pfams_from_db(database)
 
-            with open(TEsorter_results["out_fpath"]) as TEsorter_fhand:
-                te_sorter_output = parse_TEsort_output(TEsorter_fhand)
+    #         with open(TEsorter_results["out_fpath"]) as TEsorter_fhand:
+    #             te_sorter_output = parse_TEsort_output(TEsorter_fhand)
         
-            with open(interpro_results["out_fpath"]) as interpro_fhand:
-                interpro = get_pfams_from_interpro_query(interpro_fhand)
-                classified_pfams = classify_pfams(interpro, TE_pfams)
+    #         with open(interpro_results["out_fpath"]) as interpro_fhand:
+    #             interpro = get_pfams_from_interpro_query(interpro_fhand)
+    #             classified_pfams = classify_pfams(interpro, TE_pfams)
     
-            protein_class = classify_protein(classified_pfams, te_sorter_output)
+    #         protein_class = classify_protein(classified_pfams, te_sorter_output)
             
-            out_fpath = Path(out_dir / label / "{}_TE_summary.csv".format(label))
-            with open(out_fpath, "w") as out_fhand:
-                write_summary(te_summary, out_fhand)
-                summaries[label] = out_fpath
-                msg = "TE Summary for {} written in {}\n".format(label, out_fpath)
-                log_fhand.write(msg)
-                log_fhand.flush()
+    #         out_fpath = Path(out_dir / label / "{}_TE_summary.csv".format(label))
+    #         with open(out_fpath, "w") as out_fhand:
+    #             write_summary(te_summary, out_fhand)
+    #             summaries[label] = out_fpath
+    #             msg = "TE Summary for {} written in {}\n".format(label, out_fpath)
+    #             log_fhand.write(msg)
+    #             log_fhand.flush()
     
-    msg = "##STEP 6: Running stats on annotation files\n"
-    print(msg)
-    log_fhand.write(msg)
-    log_fhand.flush()
-    agat_results = run_agat(summaries, files)
-    with open(args["out"]/ "combined_summaries.tsv", "w") as combined_summaries_fhand:
-        header = create_header()
-        combined_summaries_fhand.write(header)
-        for label, results in agat_results.items():
-            stats = get_stats(results["out_fpath"], summaries[label])
-            genome = files[label]["assembly"].stem
-            annotation = files[label]["annotation"].stem
-            row = get_row(label, genome, annotation, stats)
-            combined_summaries_fhand.write(row)
+    # msg = "##STEP 6: Running stats on annotation files\n"
+    # print(msg)
+    # log_fhand.write(msg)
+    # log_fhand.flush()
+    # agat_results = run_agat(summaries, files)
+    # with open(args["out"]/ "combined_summaries.tsv", "w") as combined_summaries_fhand:
+    #     header = create_header()
+    #     combined_summaries_fhand.write(header)
+    #     for label, results in agat_results.items():
+    #         stats = get_stats(results["out_fpath"], summaries[label])
+    #         genome = files[label]["assembly"].stem
+    #         annotation = files[label]["annotation"].stem
+    #         row = get_row(label, genome, annotation, stats)
+    #         combined_summaries_fhand.write(row)
 
 
 if __name__ == "__main__":
