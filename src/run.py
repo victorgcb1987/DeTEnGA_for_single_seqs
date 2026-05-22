@@ -79,40 +79,41 @@ def run_TEsorter(input_mrna, database, threads):
 
 
 
-def remove_stop_codons(protein_sequence):
-    out_fpath = Path("{}/{}.nostop.fasta".format(protein_sequence.parents[0], protein_sequence.stem))
-    if out_fpath.exists():
-        return {"returncode": 99,
-                "msg": "protein sequence already truncated",
-                "out_fpath": out_fpath}
-
-    else:
-        stop_codons = [".", "*"]
-        original_sequence = ""
-        truncated_sequence = ""
-        with open(protein_sequence) as protein_fhand:
-            for line in protein_fhand:
-                if line.startswith(">"):
-                    header = line
-                    protein_name = header.replace(">", "").split()
-                else:
-                    original_sequence += line.rstrip()
-                    truncated_sequence += line.rstrip()
-
-                for stop_codon in stop_codons:
-                    if stop_codon in truncated_sequence:
-                        truncated_sequence = truncated_sequence.split(stop_codon)[0]
-                        with open(out_fpath, "w") as out_fhand:
-                            out_fhand.write(header)
-                            for line in (truncated_sequence[0+i:60+i] for i in range(0, len(truncated_sequence), 60)):
-                                out_fhand.write(line+"\n")
-                        msg = f'truncated, original length {len(original_sequence)}, truncated length {len(truncated_sequence)}'
-                        return {"msg": msg, "returncode": 0, 
-                                "out_fpath": out_fpath}
-                return {"msg": f'no stop codons found in protein', 
-                        "returncode": 0, 
-                        "out_fpath": protein_sequence}
-
+def remove_stop_codons(protein_sequences, out_dir):
+    stop_codons_outfile = out_dir / f"{protein_sequences}.pep.nostop.fasta"
+    if not stop_codons_outfile.is_file():
+        id = ""
+        sequences_log = []
+        stop = False
+        original_len = 0
+        new_len = 0
+        with open(stop_codons_outfile, "w") as out_fhand:
+            with open(protein_sequences) as seqs_fhand:
+                for line in seqs_fhand:
+                    if line.startswith(">"):
+                        if id:
+                            sequences_log.append("{}\t{}\t{}\n".format(id, original_len, new_len))
+                            original_len = 0
+                            new_len = 0
+                        id = line.rstrip()[1:]
+                        out_fhand.write(line)
+                        stop = False
+                    else:
+                        original_len += len(line.rstrip())
+                        if stop:
+                            continue
+                        else:
+                            stop_codons = [".", "*"]
+                            for symbol in stop_codons:
+                                if symbol in line:
+                                    stop = True
+                                    seq = line.split(symbol)[0]
+                                    new_len += len(seq)
+                                    out_fhand.write(seq+"\n")
+                            if not stop:
+                                out_fhand.write(line)
+                                new_len += len(line.rstrip())
+    return stop_codons_outfile
 
 def run_interpro(sequence, threads):
     exclude = ["AntiFam", "CDD", "Coils", "FunFam",
