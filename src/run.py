@@ -72,9 +72,9 @@ def run_TEsorter(input_mrna, database, threads):
             msg = run_.stderr.decode()
         with open("TEsorter.log.txt", "w") as log_fhand:
             log_fhand.write(run_.stderr.decode())
-        results = {"command": cmd, "returncode": returncode,
-                   "msg": msg, "out_fpath": out_mrna}
-        os.chdir(base_dir)
+    results = {"command": cmd, "returncode": returncode,
+               "msg": msg, "out_fpath": out_mrna}
+    os.chdir(base_dir)
     return results
 
 
