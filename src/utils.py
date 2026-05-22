@@ -15,6 +15,7 @@ def _group_sequences(sequences, out_fpaths):
     fhands = {taxa: open(fpath, "w") for taxa, fpath in mrnas.items()}
     for hog, members in sequences.items():
         for member in members:
+            print(member)
             fhand = fhands.get(member["kingdom"], fhands["other"])
             record = SeqIO.read(member["mrna"], "fasta")
             SeqIO.write(record, fhand, "fasta")
