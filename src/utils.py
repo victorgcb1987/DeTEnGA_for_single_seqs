@@ -30,7 +30,7 @@ def search_sequences(metadata, input_dir):
         for member in members:
             sequence_dir = hog_dir / member["proteinID"] / "seqs"
             protein_sequence = sequence_dir / "protein.faa"
-            mrna_sequence = sequence_dir / "mrna.fna"
+            mrna_sequence = sequence_dir / "rna.fna"
             print(mrna_sequence)
             if mrna_sequence.is_file() and protein_sequence.is_file():
                 protein_sequence, mrna_sequence = select_longest_isoform(sequence_dir, 
