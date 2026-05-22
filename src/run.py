@@ -66,7 +66,7 @@ def run_TEsorter(input_mrna, database, threads):
         run_ = run(cmd, capture_output=True, shell=True)
         returncode = run_.returncode
         if returncode == 0:
-            msg = "Done, check {} for details \n".format(str("TEsorter.log.txt"))
+            msg = "Done, check TEsorter.log.txt for details \n"
         else:
             msg = run_.stderr.decode()
         with open("TEsorter.log.txt", "w") as log_fhand:
