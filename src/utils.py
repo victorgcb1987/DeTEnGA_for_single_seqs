@@ -13,6 +13,7 @@ def _group_sequences(sequences, out_fpaths):
             SeqIO.write(records_mrna[member["mrnaID"]], fhand_mrna, "fasta")
 
             records_protein = SeqIO.index(member["protein"], "fasta")
+            print(member)
             SeqIO.write(records_protein[member["proteinID"]], fhand_protein, "fasta")
     for kingdom, fhand in fhands.items():
         fhand.flush()
