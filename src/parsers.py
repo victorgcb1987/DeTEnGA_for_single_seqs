@@ -6,6 +6,21 @@ from csv import DictReader
 from pathlib import Path
 
 
+def read_metadata(metadata_fhand):
+    metadata = {}
+    for row in DictReader(metadata_fhand, delimiter=","):
+        hog = row["HOG"]
+        prot_metadata = {"proteinID": row["protein"],
+                         "species": row["SpName"],
+                         "kingdom": row["Kingdom"],
+                         "category": row["Category"]}
+        if not  hog in metadata:
+            metadata[row["HOG"]] = [prot_metadata]
+        else:
+            metadata[hog].append(prot_metadata)
+    return metadata
+
+
 
 def parse_fof(input):
     fof = {}
@@ -34,8 +49,7 @@ def get_pfams_from_interpro_query(fhand):
         if line[3] == "Pfam":
             gen, code, description, start, end = line[0], line[4], line[5], line[6], line[7]
             genes[gen].append([code, description, start, end])
-    sorted_genes = {
-                    key: sorted(value, key=lambda x: int(x[2]))  # Ordena por el tercer valor (convertido a entero)
+    sorted_genes = {key: sorted(value, key=lambda x: int(x[2]))  # Ordena por el tercer valor (convertido a entero)
                     for key, value in genes.items()}
     return sorted_genes
 
@@ -47,6 +61,7 @@ def classify_pfams(interpro, te_pfams):
             else:
                 pfam.append("NT")
     return interpro
+
 
 def parse_TEsort_output(fhand):
     output = defaultdict(list)
@@ -60,10 +75,11 @@ def parse_TEsort_output(fhand):
     return output
 
 
-def create_summary(interpro_classified, tesort_output):
+def classify_protein(interpro_classified, tesort_output):
+    print(interpro_classified, tesort_output)
     summary = []
-    for transcript, values in interpro_classified.items():
-        row = {"transcript": transcript}
+    for protein, values in interpro_classified.items():
+        row = {"ProtID": protein}
         transposable = False
         no_transposable = False
         pfams_ids = []
@@ -128,6 +144,8 @@ def detenga_status(row):
         status = "PchMte"
     if row["interpro_status"] == "NA" and row["tesort_domains"] != "NA":
         status = "P0Mte"
+    if row["interpro_status"] == "NA" and row["tesort_domains"] == "NA":
+        status = "P0M0"
     return status
 
 
@@ -158,7 +176,7 @@ def get_stats(agat_stats, summary):
             num_transcripts = int(match.group(1))
     stats = {"PcpM0": 0, "PteM0": 0, "PchM0": 0, 
              "PcpMte": 0, "PteMte": 0, "PchMte": 0, 
-             "P0Mte":0, "num_transcripts": num_transcripts}
+             "P0Mte":0, "P0M0":0, "num_transcripts": num_transcripts}
     for row in DictReader(open(summary), delimiter=";"):
         stats[row["DeTEnGA_status"]] += 1
     return stats
