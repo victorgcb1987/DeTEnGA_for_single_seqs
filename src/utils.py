@@ -48,23 +48,29 @@ def select_longest_isoform(sequence_dir, protein_sequence, mrna_sequence):
             if record.id.startswith("XM"):
                 mrna_id = record.id
                 break
-        return protein_sequence, mrna_sequence, mrna_id
+        return protein_sequence, mrna_sequence, mrna_id, ""
     
     else:
         longest_isoform = protein_sequences_lengths.index(max(protein_sequences_lengths))
         longest_prot_path = sequence_dir / "protein_longest_isoform.faa"
         with open(longest_prot_path, "w") as prot_out_fhand:
             records = [record for record in SeqIO.parse(protein_sequence, "fasta")]
+            longest_isoform = records[longest_isoform]
+            prot_id = longest_isoform.id
             SeqIO.write(records[longest_isoform], prot_out_fhand, "fasta")
+            transcript = f'transcript={record.description.split()[-1].split("=")[-1][:-1]}'
         longest_mrna_path = sequence_dir / "mrna_longest_isoform.fna"
         with open(longest_mrna_path, "w") as mrna_out_fhand:
-            records = [record for record in SeqIO.parse(mrna_sequence, "fasta")]
-            SeqIO.write(records[longest_isoform], mrna_out_fhand, "fasta")
-            mrnaid = records[longest_isoform].id
-        return longest_prot_path, longest_mrna_path, mrnaid
+            records = SeqIO.parse(mrna_sequence, "fasta")
+            for record in records:
+                if transcript in record.id:
+                    SeqIO.write(record, mrna_out_fhand, "fasta")
+                    mrnaid = record.id
+        return longest_prot_path, longest_mrna_path, mrnaid, prot_id
 
 
 def search_sequences(metadata, input_dir):
+    messages = []
     found_sequences = {hog: [] for hog in metadata}
     not_found_sequences = found_sequences.copy()
     for hog, members in metadata.items():
@@ -75,15 +81,19 @@ def search_sequences(metadata, input_dir):
             mrna_sequence = sequence_dir / "rna.fna"
 
             if mrna_sequence.is_file() and protein_sequence.is_file():
-                protein_sequence, mrna_sequence, mrnaID = select_longest_isoform(sequence_dir, 
+                protein_sequence, mrna_sequence, mrnaID, protID = select_longest_isoform(sequence_dir, 
                                                                                  protein_sequence, 
                                                                                  mrna_sequence)
                 member.update({"protein": protein_sequence,
                                "mrna": mrna_sequence,
                                "main_dir": sequence_dir,
                                "mrnaID": mrnaID})
+                if protID:
+                    msg = f'{member["proteinID"]} was changed for {protID} because it was a longer insoform'
+                    messages.append(msg)
+                    member["proteinID"] = protID
                 found_sequences[hog].append(member)
 
             else:
                 not_found_sequences[hog].append(member)
-    return found_sequences, not_found_sequences
+    return found_sequences, not_found_sequences, messages

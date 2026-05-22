@@ -109,7 +109,10 @@ def main():
 
     msg = "Checking if all sequences are avaiable"
     emit_message(msg, log_fhand)
-    found_sequences, not_found_sequences = search_sequences(metadata, args["input"])
+    found_sequences, not_found_sequences, messages = search_sequences(metadata, args["input"])
+
+    for msg in messages:
+        emit_message(msg, log_fhand)
 
     input_fpaths = generate_input_files(found_sequences, out_dir)
 
