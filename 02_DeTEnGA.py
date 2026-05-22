@@ -116,7 +116,7 @@ def main():
 
     msg = "Analising RNA transposable elements with TEsorter"
     emit_message(msg, log_fhand)
-    for kind, fpath in input_fpaths:
+    for kind, fpath in input_fpaths.items():
         if kind.startswith("mrna_"):
             kingdom = kind.split("_")[-1]
             if kingdom == "viridiplantae":
