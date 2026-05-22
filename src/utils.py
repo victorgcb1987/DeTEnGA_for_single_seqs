@@ -39,6 +39,7 @@ def search_sequences(metadata, input_dir):
                                "mrna": mrna_sequence,
                                "main_dir": sequence_dir})
                 found_sequences[hog].append(member)
+                print(found_sequences)
             else:
                 not_found_sequences[hog].append(member)
     return found_sequences, not_found_sequences
