@@ -56,9 +56,9 @@ def run_TEsorter(input_mrna, database, threads):
     os.chdir(out_mrna.parents[0].absolute())
     if database == "rex-db":
         #it will run an combination of viridiplantae and Metazoa
-        cmd = f'TEsorter {input_mrna} -p {threads}'
+        cmd = f'TEsorter {input_mrna.name} -p {threads}'
     else:
-        cmd = f'TEsorter {input_mrna} -db {database} -p {threads}'
+        cmd = f'TEsorter {input_mrna.name} -db {database} -p {threads}'
     if out_mrna.exists():
         returncode = 99
         msg = "File {} already exists\n".format(str(out_mrna))
