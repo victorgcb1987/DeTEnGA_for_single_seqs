@@ -10,7 +10,7 @@ def read_metadata(metadata_fhand):
     metadata = {}
     for row in DictReader(metadata_fhand, delimiter=","):
         hog = row["HOG"]
-        prot_metadata = {"proteinID": row["protein"],
+        prot_metadata = {"proteinID": row["Protein"],
                          "species": row["SpName"],
                          "kingdom": row["Kingdom"],
                          "category": row["Category"]}
