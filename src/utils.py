@@ -13,11 +13,11 @@ def select_longest_isoform(sequence_dir,protein_sequence, mrna_sequence):
         longest_isoform = protein_sequences_lengths.index(max(protein_sequences_lengths))
         longest_prot_path = sequence_dir / "protein_longest_isoform.faa"
         with open(longest_prot_path, "w") as prot_out_fhand:
-            records = SeqIO.parse(protein_sequence, "fasta")
+            records = [record for record in SeqIO.parse(protein_sequence, "fasta")]
             SeqIO.write(records[longest_isoform], prot_out_fhand, "fasta")
         longest_mrna_path = sequence_dir / "mrna_longest_isoform.fna"
         with open(longest_mrna_path, "w") as mrna_out_fhand:
-            records = SeqIO.parse(mrna_sequence, "fasta")
+            records = [record for record in SeqIO.parse(mrna_sequence, "fasta")]
             SeqIO.write(records[longest_isoform], mrna_out_fhand, "fasta")
         return longest_prot_path, longest_mrna_path
 
