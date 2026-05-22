@@ -130,9 +130,9 @@ def main():
                 rex_db = "rex-db"
             TEsorter_results = run_TEsorter(member["mrna"], rex_db, args["threads"])
             if TEsorter_results["returncode"] == 99:
-                msg = f'TEsorter already done for {member["proteinID"]}'
+                msg = f'TEsorter already done for {member["proteinID"]}. Skipping Tesorter analysis'
             elif TEsorter_results["returncode"] == 0:
-                msg = f'TEsorter succesfully run for {member["proteinID"]}. Skipping InterproScan analysis'
+                msg = f'TEsorter succesfully run for {member["proteinID"]}.'
             else:
                 msg = f'TEsorter failed for protein {member["proteinID"]}'
             
