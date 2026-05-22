@@ -138,7 +138,7 @@ def main():
 
     msg = "Truncating protein sequence at first stop codon"
     emit_message(msg, log_fhand)
-    stop_codons_out = remove_stop_codons(input_fpaths["protein"], out_dir)
+    stop_codons_out = remove_stop_codons(input_fpaths["protein"])
     emit_message(msg, log_fhand)
        
 

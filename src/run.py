@@ -79,8 +79,8 @@ def run_TEsorter(input_mrna, database, threads):
 
 
 
-def remove_stop_codons(protein_sequences, out_dir):
-    stop_codons_outfile = out_dir / f"{protein_sequences}.pep.nostop.fasta"
+def remove_stop_codons(protein_sequences):
+    stop_codons_outfile = Path(f"{protein_sequences}.pep.nostop.fasta")
     if not stop_codons_outfile.is_file():
         id = ""
         sequences_log = []
