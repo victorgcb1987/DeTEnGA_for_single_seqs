@@ -116,6 +116,7 @@ def main():
     #Create TEsorter input
     for hog, members in found_sequences.items():
         for member in members:
+            print(member)
             msg = f'Started analysis of {hog}, {member["species"]} protID {member["proteinID"]}'
             emit_message(msg, log_fhand)
             msg = "Analising RNA transposable elements with TEsorter"
