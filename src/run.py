@@ -127,10 +127,10 @@ def run_interpro(sequence, threads):
     out_fpath = Path("{}.tsv".format(sequence))
     log_fpath = Path("{}/interpro.log.txt".format(out_fpath.parents[0]))
     cmd = f'interproscan.sh -i {out_fpath} -cpu {threads} '
-    cmd = f'-exclappl {",".join(exclude)} --disable-precalc > {log_fpath}'
-    if out_fpath.exists():
+    cmd += f'-exclappl {",".join(exclude)} --disable-precalc > {log_fpath}'
+    if Path(out_fpath.name).exists():
             returncode = 99
-            msg = "InterProScan analysis already done"
+            msg = "InterProScan analysis already done, Skipping"
     else:
         run_ = run(cmd, shell=True, capture_output=True)
         returncode = run_.returncode
