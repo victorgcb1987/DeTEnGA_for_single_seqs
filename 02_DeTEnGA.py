@@ -143,7 +143,7 @@ def main():
             msg = "Truncating protein sequence at first stop codon"
             emit_message(msg, log_fhand)
             
-            stop_codons_results = remove_stop_codons(member["proteinID"])
+            stop_codons_results = remove_stop_codons(member["protein"])
             msg = f'Protein {member["proteinID"]}: '
             msg += results["msg"]
             emit_message(msg, log_fhand)
