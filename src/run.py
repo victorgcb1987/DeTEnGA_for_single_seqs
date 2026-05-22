@@ -111,7 +111,7 @@ def remove_stop_codons(protein_sequence):
                                 "out_fpath": out_fpath}
                 return {"msg": f'no stop codons found in protein', 
                         "returncode": 0, 
-                        "out_fpath": out_fpath}
+                        "out_fpath": protein_sequence}
 
 
 def run_interpro(sequence, threads):

@@ -145,7 +145,6 @@ def main():
             
             stop_codons_results = remove_stop_codons(member["protein"])
             msg = f'Protein {member["proteinID"]}: {stop_codons_results["msg"]}'
-            msg += stop_codons_results["msg"]
             emit_message(msg, log_fhand)
        
 
@@ -160,7 +159,6 @@ def main():
             else:
                 msg = f'InteproScan failed for protein {member["proteinID"]}: {interpro_results["msg"]}'
             emit_message(msg, log_fhand)
-            print(interpro_results["returncode"])
             if interpro_results["returncode"] != 99 or interpro_results["returncode"] != 0:
                 continue
 
