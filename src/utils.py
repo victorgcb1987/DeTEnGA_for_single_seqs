@@ -9,7 +9,7 @@ def _group_sequences(sequences, out_fpaths):
                 SeqIO.write(record, protein_fhand, "fasta")
     for mode, out_fpath in out_fpaths.items():
         if "mrna_" in mode:
-            kingdom = mode.split("_")
+            kingdom = mode.split("_")[-1]
             with open(out_fpath, "w") as out_fhand:
                 for hog, members in sequences.items():
                     for member in members:
