@@ -19,9 +19,9 @@ def _group_sequences(sequences, out_fpaths):
             fhand = fhands.get(member["kingdom"], fhands["other"])
             records = SeqIO.index(member["mrna"], "fasta")
             SeqIO.write(records[member["mrnaID"]], fhand, "fasta")
-    for fhand in fhands:
-        fhand.flush()
-        fhand.close()
+    for kingdom, fhand in fhands.items():
+        kingdom.flush()
+        kingdom.close()
 
 
 def generate_input_files(sequences, out_fpath):
