@@ -32,7 +32,7 @@ def generate_input_files(sequences, out_fpath):
     return outs
 
 
-def select_longest_isoform(sequence_dir,protein_sequence, mrna_sequence):
+def select_longest_isoform(sequence_dir, protein_sequence, mrna_sequence):
     protein_sequences_lengths = []
     records = SeqIO.parse(protein_sequence, "fasta")
     for record in records:
@@ -65,8 +65,8 @@ def search_sequences(metadata, input_dir):
 
             if mrna_sequence.is_file() and protein_sequence.is_file():
                 protein_sequence, mrna_sequence, mrnaID = select_longest_isoform(sequence_dir, 
-                                                                         protein_sequence, 
-                                                                         mrna_sequence)
+                                                                                 protein_sequence, 
+                                                                                 mrna_sequence)
                 member.update({"protein": protein_sequence,
                                "mrna": mrna_sequence,
                                "main_dir": sequence_dir,
