@@ -153,16 +153,8 @@ def main():
     else:
         msg = f'InteproScan failed: {interpro_results["msg"]}'
     emit_message(msg, log_fhand)
-    if interpro_results["returncode"] != 99 or interpro_results["returncode"] != 0:
-        raise RuntimeError()
-    
-
-
-    #         msg = f'Protein {member["proteinID"]}: merging evidences from Interpro and TEsorter'
-    #         emit_message(msg, log_fhand)
-    
-    #         database = REXDB_PFAMS[database]
-    #         TE_pfams = get_pfams_from_db(database)
+    database = REXDB_PFAMS[database]
+    TE_pfams = get_pfams_from_db(database)
 
     #         with open(TEsorter_results["out_fpath"]) as TEsorter_fhand:
     #             te_sorter_output = parse_TEsort_output(TEsorter_fhand)

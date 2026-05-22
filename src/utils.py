@@ -1,31 +1,29 @@
 from Bio import SeqIO
 
 
-def _group_sequences(sequences, out_fpaths):
-    with open(out_fpaths["protein"], "w") as protein_fhand:
-        for hog, members in sequences.items():
-            for member in members:
-                record = SeqIO.read(member["protein"], "fasta")
-                SeqIO.write(record, protein_fhand, "fasta")
-    
-    mrnas = {"viridiplantae": out_fpaths["mrna_viridiplantae"],
-             "metazoa": out_fpaths["mrna_metazoa"],
-             "fungi": out_fpaths["mrna_fungi"],
-             "other": out_fpaths["mrna_other"]}
-    fhands = {taxa: open(fpath, "w") for taxa, fpath in mrnas.items()}
+def _group_sequences(sequences, out_fpaths): 
+    fhands = {taxa: open(fpath, "w") for taxa, fpath in out_fpaths.items()}
     for hog, members in sequences.items():
         for member in members:
             print(member)
-            fhand = fhands.get(member["kingdom"], fhands["other"])
-            records = SeqIO.index(member["mrna"], "fasta")
-            SeqIO.write(records[member["mrnaID"]], fhand, "fasta")
+            fhand_mrna = fhands.get(f'mrna_{member["kingdom"]}', fhands["mrna_other"])
+            fhand_protein = fhands.get(f'protein{member["kingdom"]}', fhands["protein_other"])
+            
+            records_mrna = SeqIO.index(member["mrna"], "fasta")
+            SeqIO.write(records_mrna[member["mrnaID"]], fhand_mrna, "fasta")
+
+            records_protein = SeqIO.index(member["protein"], "fasta")
+            SeqIO.write(records_protein[member["proteinID"]], fhand_protein, "fasta")
     for kingdom, fhand in fhands.items():
         fhand.flush()
         fhand.close()
 
 
 def generate_input_files(sequences, out_fpath):
-    outs = {"protein": out_fpath / "protein_sequences.faa",
+    outs = {"protein_viridiplantae": out_fpath / "protein_viridiplantae_sequences.faa",
+            "protein_metazoa": out_fpath / "protein_metazoa_sequences.faa",
+            "protein_fungi": out_fpath / "protein_fungi_sequences.faa",
+            "protein_other": out_fpath / "protein_other_sequences.faa",
             "mrna_viridiplantae": out_fpath / "mrna_viridiplantae_sequences.fna",
             "mrna_metazoa": out_fpath / "mrna_metazoa_sequences.fna",
             "mrna_fungi": out_fpath / "mrna_fungi_sequences.fna",
