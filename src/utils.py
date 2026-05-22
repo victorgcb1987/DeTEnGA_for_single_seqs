@@ -7,27 +7,28 @@ def _group_sequences(sequences, out_fpaths):
             for member in members:
                 record = SeqIO.read(member["protein"], "fasta")
                 SeqIO.write(record, protein_fhand, "fasta")
-    for mode, out_fpath in out_fpaths.items():
-        if "mrna_" in mode:
-            kingdom = mode.split("_")[-1]
-            with open(out_fpath, "w") as out_fhand:
-                for hog, members in sequences.items():
-                    for member in members:
-                        print(member["kingdom"], mode)
-                        if member["kingdom"] == mode:
-                            record = SeqIO.read(member["mrna"], "fasta")
-                            SeqIO.write(record, out_fhand, "fasta")
+    
+    mrnas = {"viridiplantae": out_fpaths["mrna_viridiplantae"],
+             "metazoa": out_fpaths["mrna_metazoa"],
+             "fungi": out_fpaths["mrna_fungi"],
+             "other": out_fpaths["mrna_ohter"]}
+    fhands = {taxa: open(fpath, "w") for taxa, fpath in mrnas.items()}
+    for hog, members in sequences.items():
+        for member in members:
+            fhand = fhands.get(member["kingdom"], fhands["other"])
+            record = SeqIO.read(member["mrna"], "fasta")
+            SeqIO.write(record, fhand, "fasta")
+    for fhand in fhands:
+        fhand.flush()
+        fhand.close()
 
 
 def generate_input_files(sequences, out_fpath):
-    mrna_out_viridiplantae = out_fpath / "mrna_viridiplantae_sequences.fna"
-    mrna_out_metazoa = out_fpath / "mrna_metazoa_sequences.fna"
-    mrna_out_other = out_fpath / "mrna_other_sequences.fna"
-    prot_out = out_fpath / "protein_sequences.faa"
-    outs = {"protein": prot_out,
-            "mrna_viridiplantae": mrna_out_viridiplantae,
-            "mrna_metazoa": mrna_out_metazoa,
-            "mrna_other": mrna_out_other}
+    outs = {"protein": out_fpath / "protein_sequences.faa",
+            "mrna_viridiplantae": out_fpath / "mrna_viridiplantae_sequences.fna",
+            "mrna_metazoa": out_fpath / "mrna_metazoa_sequences.fna",
+            "mrna_fungi": out_fpath / "mrna_fungi_sequences.fna",
+            "mrna_other": out_fpath / "mrna_other_sequences.fna"}
     _group_sequences(sequences, outs)
 
     return outs

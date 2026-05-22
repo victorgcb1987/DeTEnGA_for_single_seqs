@@ -12,8 +12,8 @@ def read_metadata(metadata_fhand):
         hog = row["HOG"]
         prot_metadata = {"proteinID": row["Protein"],
                          "species": row["SpName"],
-                         "kingdom": row["Kingdom"],
-                         "category": (row["Category"]).lower()}
+                         "kingdom": row["Kingdom"].lower(),
+                         "category": (row["Category"])}
         if not  hog in metadata:
             metadata[row["HOG"]] = [prot_metadata]
         else:
