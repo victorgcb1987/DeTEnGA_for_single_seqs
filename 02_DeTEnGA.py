@@ -114,25 +114,26 @@ def main():
     input_fpaths = generate_input_files(found_sequences, out_dir)
 
 
-    # msg = "Analising RNA transposable elements with TEsorter"
-    # emit_message(msg, log_fhand)
-    #         if member["kingdom"] == "Viridiplantae":
-    #             rex_db = "rexdb-plant"
-    #         elif member["kingdom"] == "Metazoa":
-    #             rex_db = "rexdb-metazoa"
-    #         else:
-    #             rex_db = "rex-db"
-    #         TEsorter_results = run_TEsorter(member["mrna"], rex_db, args["threads"])
-    #         if TEsorter_results["returncode"] == 99:
-    #             msg = f'TEsorter already done for {member["proteinID"]}. Skipping Tesorter analysis'
-    #         elif TEsorter_results["returncode"] == 0:
-    #             msg = f'TEsorter succesfully run for {member["proteinID"]}.'
-    #         else:
-    #             msg = f'TEsorter failed for protein {member["proteinID"]}'
+    msg = "Analising RNA transposable elements with TEsorter"
+    emit_message(msg, log_fhand)
+    for kind, fpath in input_fpaths:
+        if kind.startswith("mrna_"):
+            kingdom = kind.split("_")[-1]
+            if kingdom == "viridiplantae":
+                rex_db = "rexdb-plant"
+            elif kingdom == "metazoa":
+                rex_db = "rexdb-metazoa"
+            else:
+                rex_db = "rex-db"
+            TEsorter_results = run_TEsorter(fpath, rex_db, args["threads"])
+            if TEsorter_results["returncode"] == 99:
+                msg = f'TEsorter already done for {kingdom}. Skipping Tesorter analysis'
+            elif TEsorter_results["returncode"] == 0:
+                msg = f'TEsorter succesfully run for {kingdom}.'
+            else:
+                msg = f'TEsorter failed for protein {kingdom}: {TEsorter_results["msg"]}'
             
-    #         emit_message(msg, log_fhand)
-    #         if TEsorter_results["returncode"] == 1:
-    #             continue
+            emit_message(msg, log_fhand)
             
     #         msg = "Truncating protein sequence at first stop codon"
     #         emit_message(msg, log_fhand)
