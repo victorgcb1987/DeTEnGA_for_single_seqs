@@ -94,7 +94,7 @@ def remove_stop_codons(protein_sequence):
             for line in protein_fhand:
                 if line.startswith(">"):
                     header = line
-                    protein_name = header.split().replace(">", "")
+                    protein_name = header.replace(">", "").split()
                 else:
                     original_sequence += line.rstrip()
                     truncated_sequence += line.rstrip()
