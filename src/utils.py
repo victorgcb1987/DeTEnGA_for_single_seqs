@@ -39,6 +39,7 @@ def select_longest_isoform(sequence_dir, protein_sequence, mrna_sequence):
         protein_sequences_lengths.append(len(record.seq))
     if len(protein_sequences_lengths) == 1:
         record = SeqIO.read(mrna_sequence, "fasta")
+        print(protein_sequence, mrna_sequence)
         mrna_id = record.id
         return protein_sequence, mrna_sequence, mrna_id
     else:
