@@ -139,22 +139,23 @@ def main():
     msg = "Truncating protein sequence at first stop codon"
     emit_message(msg, log_fhand)
     stop_codons_out = remove_stop_codons(input_fpaths["protein"])
-    emit_message(msg, log_fhand)
+
        
 
-    #         #Run interproscan
-    #         msg = "Analyze protein domains with interproscan"
-    #         emit_message(msg, log_fhand)
-    #         interpro_results = run_interpro(stop_codons_results["out_fpath"], args["threads"])
-    #         if interpro_results["returncode"] == 99:
-    #             msg = f'InterproScan already done for {member["proteinID"]}. Skipping Interpro analysis'
-    #         elif interpro_results["returncode"] == 0:
-    #             msg = f'InteproScan succesfully run for {member["proteinID"]}.'
-    #         else:
-    #             msg = f'InteproScan failed for protein {member["proteinID"]}: {interpro_results["msg"]}'
-    #         emit_message(msg, log_fhand)
-    #         if interpro_results["returncode"] != 99 or interpro_results["returncode"] != 0:
-    #             continue
+    #Run interproscan
+    msg = "Analyze protein domains with interproscan"
+    emit_message(msg, log_fhand)
+    interpro_results = run_interpro(stop_codons_out, args["threads"])
+    if interpro_results["returncode"] == 99:
+        msg = 'InterproScan already done. Skipping Interpro analysis'
+    elif interpro_results["returncode"] == 0:
+        msg = 'InteproScan succesfully run'
+    else:
+        msg = f'InteproScan failed: {interpro_results["msg"]}'
+    emit_message(msg, log_fhand)
+    if interpro_results["returncode"] != 99 or interpro_results["returncode"] != 0:
+        raise RuntimeError()
+    
 
 
     #         msg = f'Protein {member["proteinID"]}: merging evidences from Interpro and TEsorter'
