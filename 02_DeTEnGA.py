@@ -115,25 +115,25 @@ def main():
 
     #Create TEsorter input
     for hog, members in found_sequences.items():
-        for member, values in members.items():
-            msg = f'Started analysis of {hog}, {values["species"]} protID {member}'
+        for member in members:
+            msg = f'Started analysis of {hog}, {member["species"]} protID {member["proteinID"]}'
             emit_message(msg, log_fhand)
             msg = "Analising RNA transposable elements with TEsorter"
             emit_message(msg, log_fhand)
        
-            if values["kingdom"] == "Viridiplantae":
+            if member["kingdom"] == "Viridiplantae":
                 rex_db = "rexdb-plant"
-            elif values["kingdom"] == "Metazoa":
+            elif member["kingdom"] == "Metazoa":
                 rex_db = "rexdb-metazoa"
             else:
                 rex_db = "rex-db"
-            TEsorter_results = run_TEsorter(values["mrna"], rex_db, args["threads"])
+            TEsorter_results = run_TEsorter(member["mrna"], rex_db, args["threads"])
             if TEsorter_results["returncode"] == 99:
-                msg = f'TEsorter already done for {member}'
+                msg = f'TEsorter already done for {member["proteinID"]}'
             elif TEsorter_results["returncode"] == 0:
-                msg = f'TEsorter succesfully run for {member}. Skipping InterproScan analysis'
+                msg = f'TEsorter succesfully run for {member["proteinID"]}. Skipping InterproScan analysis'
             else:
-                msg = f'TEsorter failed for protein {member}'
+                msg = f'TEsorter failed for protein {member["proteinID"]}'
             
             emit_message(msg, log_fhand)
             if TEsorter_results["returncode"] == 1:
@@ -142,8 +142,8 @@ def main():
             msg = "Truncating protein sequence at first stop codon"
             emit_message(msg, log_fhand)
             
-            stop_codons_results = remove_stop_codons(values["protein"])
-            msg = f'Protein {member}: '
+            stop_codons_results = remove_stop_codons(member["proteinID"])
+            msg = f'Protein {member["proteinID"]}: '
             msg += results["msg"]
             emit_message(msg, log_fhand)
        
@@ -152,14 +152,14 @@ def main():
             msg = "Analyze protein domains with interproscan"
             emit_message(msg, log_fhand)
             interpro_results = run_interpro(stop_codons_results["out_fpath"], args["threads"])
-            msg = f'Protein {member}: '
+            msg = f'Protein {member["proteinID"]}: '
             msg += interpro_results["msg"]
             emit_message(msg, log_fhand)
             if interpro_results["returncode"] == 1:
                 continue
 
 
-            msg = f'Protein {member}: merging evidences from Interpro and TEsorter'
+            msg = f'Protein {member["proteinID"]}: merging evidences from Interpro and TEsorter'
             emit_message(msg)
     
             database = REXDB_PFAMS[database]
