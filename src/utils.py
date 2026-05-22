@@ -28,7 +28,7 @@ def search_sequences(metadata, input_dir):
     for hog, members in metadata.items():
         hog_dir = input_dir / hog
         for member in members:
-            sequence_dir = hog_dir / members["protein"] / "seqs"
+            sequence_dir = hog_dir / member["protein"] / "seqs"
             protein_sequence = sequence_dir / "protein.faa"
             mrna_sequence = sequence_dir / "mrna.fna"
             if mrna_sequence.is_file() and protein_sequence.is_file():
