@@ -40,7 +40,7 @@ def parse_arguments():
                         required=True)
     
     help_output_dir = '''(Required) Metadata file'''
-    parser.add_argument("--metadata_file", "-m", type=str,
+    parser.add_argument("--metadata", "-m", type=str,
                         help=help_output_dir,
                         required=True)
     
@@ -172,8 +172,7 @@ def main():
                 interpro = get_pfams_from_interpro_query(interpro_fhand)
                 classified_pfams = classify_pfams(interpro, TE_pfams)
     
-            protein_class = classify_protein(classified_pfams, te_sorter_output, 
-                                             hog, values)
+            protein_class = classify_protein(classified_pfams, te_sorter_output)
             
             out_fpath = Path(out_dir / label / "{}_TE_summary.csv".format(label))
             with open(out_fpath, "w") as out_fhand:
