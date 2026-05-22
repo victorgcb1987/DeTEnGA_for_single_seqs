@@ -17,8 +17,8 @@ def _group_sequences(sequences, out_fpaths):
         for member in members:
             print(member)
             fhand = fhands.get(member["kingdom"], fhands["other"])
-            record = SeqIO.read(member["mrna"], "fasta")
-            SeqIO.write(record, fhand, "fasta")
+            records = SeqIO.index(member["mrna"], "fasta")
+            SeqIO.write(records[member["mrnaID"]], fhand, "fasta")
     for fhand in fhands:
         fhand.flush()
         fhand.close()
@@ -55,7 +55,7 @@ def select_longest_isoform(sequence_dir, protein_sequence, mrna_sequence):
         longest_isoform = protein_sequences_lengths.index(max(protein_sequences_lengths))
         longest_prot_path = sequence_dir / "protein_longest_isoform.faa"
         with open(longest_prot_path, "w") as prot_out_fhand:
-            records = [record for record in SeqIO.parse(protein_sequence, "fasta")]
+            records = [record for record in SeqIO.parse(protein_sequence, "fasta") if record.id.startwith("XM")]
             SeqIO.write(records[longest_isoform], prot_out_fhand, "fasta")
         longest_mrna_path = sequence_dir / "mrna_longest_isoform.fna"
         with open(longest_mrna_path, "w") as mrna_out_fhand:
