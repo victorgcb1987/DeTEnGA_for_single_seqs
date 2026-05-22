@@ -10,7 +10,7 @@ def _group_sequences(sequences, out_fpaths):
     for mode, out_fpath in out_fpaths.items():
         if "mrna_" in mode:
             kingdom = mode.split("_")
-            with open(out_fpath) as out_fhand:
+            with open(out_fpath, "w") as out_fhand:
                 for hog, members in sequences.items():
                     for member in members:
                         if member["Kingdom"] == mode:
