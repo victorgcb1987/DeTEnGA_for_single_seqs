@@ -71,7 +71,7 @@ def main():
             ]
 
             result = subprocess.run(
-                cmd,
+                " ".join(cmd),
                 capture_output=True,
                 text=True,
                 check=True
