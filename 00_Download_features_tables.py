@@ -67,7 +67,6 @@ def main():
                 "genome",
                 "accession",
                 acc,
-                "--as-json"
             ]
 
             result = subprocess.run(
