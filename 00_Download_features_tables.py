@@ -73,8 +73,10 @@ def main():
                 " ".join(cmd),
                 capture_output=True,
                 text=True,
-                check=True
+                check=True,
+                shell=True,
             )
+
 
             data = json.loads(result.stdout)
 
