@@ -81,6 +81,7 @@ def main():
             data = json.loads(result.stdout)
 
             report = data["reports"][0]
+            print(report)
 
             ftp_path = report["assembly_info"]["assembly_accession"]
 
