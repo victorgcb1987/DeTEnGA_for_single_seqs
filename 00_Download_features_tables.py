@@ -159,6 +159,7 @@ def find_suppressed_accessions(seqIDs_by_accession, downloaded_files, out_dir):
     url = "https://ftp.ncbi.nlm.nih.gov/genomes/all/"
     for accession in seqIDs_by_accession:
         if accession not in downloaded_files:
+            reformat= accession.split(".")[0].replace("_", "")
             letter_code = accession[0:3]
             first_part = accession[3:6]
             second_part = accession[6:9]
@@ -178,14 +179,14 @@ def main():
     filter = [accession for accession in seqIDs_by_accession]
     print("#2: getting ftp urls from genbanks")
     #accession_genbank_ftp = get_ftp_link_by_accession(args["genbank"], filter=filter)
-    print("#3: gettingftp urls from refseqs")
+    print("#3: getting ftp urls from refseqs")
     accession_refseq_ftp = get_ftp_link_by_accession(args["refseq"], filter=filter)
     print("#4: merging data")
     #merged_ftp_links = accession_genbank_ftp | accession_refseq_ftp
     print("#5: downloading feature tables")
     downloaded_files = download_feature_tables(accession_refseq_ftp, args["out"])
     print(f'Found ftp URLs for {len(downloaded_files)} of {len(seqIDs_by_accession)}')
-    print("#6 Trying to reconstruct ftp URLs from supressed accessions")
+    print("#6 Trying to reconstruct ftp URLs for supressed accessions")
     suppressed_accessions_links = find_suppressed_accessions(seqIDs_by_accession, downloaded_files, args["out"])
     print("#7: get protein-mrna equivalence")
     equivalences = get_seqs_equivalences(downloaded_files, seqIDs_by_accession)
