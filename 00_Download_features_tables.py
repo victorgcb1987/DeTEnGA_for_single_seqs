@@ -85,7 +85,7 @@ def download_feature_tables(ftp_links, out_dir):
         for accession, ftp_link in ftp_links.items():
             out_file = feature_tables / ftp_link.name
             if not out_file.is_file():
-                cmd = f'wget {ftp_link} --directory-prefix={feature_tables}'
+                cmd = f'curl {ftp_link} -o {out_file}'
                 cmd = run(cmd, shell=True, capture_output=True)
                 if cmd.returncode == 0:
                     msg = f'{accession} {ftp_link} downloaded successfully\n'
