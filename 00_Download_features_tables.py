@@ -77,24 +77,24 @@ def get_ftp_link_by_accession(file, filter=[]):
 
 
 def download_feature_tables(ftp_links, out_dir):
-    with open(out_dir / "download_log.txt", "w") as log_fhand:
         downloaded_files = {}
         feature_tables = out_dir / "feature_tables"
         if not feature_tables.exists():
             feature_tables.mkdir(parents=True)
-        for accession, ftp_link in ftp_links.items():
-            out_file = feature_tables / ftp_link.name
-            if not out_file.is_file():
-                cmd = f'curl {ftp_link} -o {out_file}'
-                cmd = run(cmd, shell=True, capture_output=True)
-                if cmd.returncode == 0:
-                    msg = f'{accession} {ftp_link} downloaded successfully\n'
+        with open(out_dir / "download_log.txt", "w") as log_fhand:
+            for accession, ftp_link in ftp_links.items():
+                out_file = feature_tables / ftp_link.name
+                if not out_file.is_file():
+                    cmd = f'curl {ftp_link} -o {out_file}'
+                    cmd = run(cmd, shell=True, capture_output=True)
+                    if cmd.returncode == 0:
+                        msg = f'{accession} {ftp_link} downloaded successfully\n'
+                    else:
+                        msg = f'{accession} {ftp_link} download failed {cmd.stderr}\n'
                 else:
-                    msg = f'{accession} {ftp_link} download failed {cmd.stderr}\n'
-            else:
-                msg = f'{accession} {ftp_link} download done already \n'
+                    msg = f'{accession} {ftp_link} download done already \n'
             
-            log_fhand.write(msg)
+                log_fhand.write(msg)
 
 def main():
     args = get_arguments()
