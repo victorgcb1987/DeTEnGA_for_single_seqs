@@ -117,8 +117,9 @@ def retrive_equivalence_info(feature_table):
                 feat = line[0]
                 if feat == "mRNA":
                     mrnaID = line[10]
-                    proteinID = line[11]
+                    proteinID = line[13]
                     equivalences[proteinID] = mrnaID
+                    print(equivalences)
     return equivalences
 
 
@@ -205,7 +206,7 @@ def main():
     print("#5: downloading feature tables")
     downloaded_files = download_feature_tables(accession_refseq_ftp, args["out"])
     print(f'Found ftp URLs for {len(downloaded_files)} of {len(seqIDs_by_accession)}')
-    print("#6 Trying to reconstruct ftp URLs for supressed accessions")
+    print("#6 Trying to reconstruct ftp URLs for supressed accessions and download")
     downloaded_files = find_suppressed_accessions(seqIDs_by_accession, downloaded_files, args["out"])
     print(len(downloaded_files))
     print("#7: get protein-mrna equivalence")
