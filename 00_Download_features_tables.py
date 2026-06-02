@@ -117,7 +117,7 @@ def retrive_equivalence_info(feature_table):
                 feat = line[0]
                 if feat == "mRNA":
                     mrnaID = line[10]
-                    proteinID = line[13]
+                    proteinID = line[12]
                     equivalences[proteinID] = mrnaID
                     print(equivalences)
     return equivalences
