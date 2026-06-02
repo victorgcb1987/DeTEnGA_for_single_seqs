@@ -105,7 +105,7 @@ def download_feature_tables(ftp_links, out_dir):
 
 def retrive_equivalence_info(feature_table):
     equivalences = {}
-    with gzip.open(feature_table, "r") as feat_fhand:
+    with gzip.open(feature_table, "rt") as feat_fhand:
         for line in feat_fhand:
             if line.startswith("#") or not line:
                 continue
