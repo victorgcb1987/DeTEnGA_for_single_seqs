@@ -140,7 +140,7 @@ def main():
     print("#5: downloading feature tables")
     downloaded_files = download_feature_tables(merged_ftp_links, args["out"])
     print("#6: get protein-mrna equivalence")
-    equivalences = get_seqs_equivalence(downloaded_files, seqIDs_by_accession)
+    equivalences = get_seqs_equivalences(downloaded_files, seqIDs_by_accession)
     
 
 if __name__ == "__main__":
