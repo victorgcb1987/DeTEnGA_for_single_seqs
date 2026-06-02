@@ -159,11 +159,11 @@ def find_suppressed_accessions(seqIDs_by_accession, downloaded_files, out_dir):
     url = "https://ftp.ncbi.nlm.nih.gov/genomes/all/"
     for accession in seqIDs_by_accession:
         if accession not in downloaded_files:
-            reformat= accession.split(".")[0].replace("_", "")
-            letter_code = accession[0:3]
-            first_part = accession[3:6]
-            second_part = accession[6:9]
-            third_part = accession[9:]
+            reformat = accession.split(".")[0].replace("_", "")
+            letter_code = reformat[0:3]
+            first_part = reformat[3:6]
+            second_part = reformat[6:9]
+            third_part = reformat[9:]
             url_part = f'{letter_code}/{first_part}/{second_part}/{third_part}/'
             parent_url = url+url_part
             print(parent_url)
