@@ -1,19 +1,14 @@
 import argparse
 import csv
-import json
-import subprocess
-import requests
 import sys
+
+from subprocess import run
 from pathlib import Path
-
-
-OUTDIR = Path("feature_tables")
-OUTDIR.mkdir(exist_ok=True)
 
 
 
 def parse_arguments():
-    desc = "Donwload genome feature tables"
+    desc = "Generate NCBI feature tables for multispecies"
     parser = argparse.ArgumentParser(description=desc)
     
     
@@ -22,9 +17,19 @@ def parse_arguments():
                         help=help_output_dir,
                         required=True)
     
-    help_output_dir = '''(Required) Metadata file'''
+    help_metadata_file = '''(Required) Metadata file'''
     parser.add_argument("--metadata", "-m", type=str,
-                        help=help_output_dir,
+                        help=help_metadata_file,
+                        required=True)
+    
+    help_genbank_file = '''(Required) Genbank feature file'''
+    parser.add_argument("--genbank", "-b", type=str,
+                        help=help_genbank_file,
+                        required=True)
+    
+    help_refseq_file = '''(Required) Refseq feature file'''
+    parser.add_argument("--refseq", "-r", type=str,
+                        help=help_refseq_file,
                         required=True)
     
     
@@ -40,90 +45,66 @@ def get_arguments():
     if not output.exists():
         output.mkdir(parents=True)
     return {"out": output,
-            "metadata": parser.metadata}
+            "metadata": parser.metadata,
+            "genbank": parser.genbank,
+            "refseq": parser.refseq}
+
+def get_sequences_ids_by_accession(metadata_file):
+    seqsID = {}
+    with open(metadata_file) as metadata_fhand:
+        for row in csv.DictReader(metadata_fhand, delimiter=","):
+            accession = row["Genome"]
+            protein = row["Protein"]
+            if accession not in seqsID:
+                seqsID[accession] = [protein]
+            else:
+                seqsID[accession].append(protein)
+    return seqsID
 
 
+def get_ftp_link_by_accession(file, filter=[]):
+    ftp_urls = {}
+    with open(file) as fhand:
+        for row in csv.DictReader(fhand, delimiter="\t"):
+            accession = row["assembly_accession"]
+            if accession not in filter:
+                continue
+            ftp = row["ftp_path"]
+            suffix = ftp.split("/")[-2]
+            feature_link = f'{ftp}{suffix}_feature_table.txt.gz'
+            ftp_urls[accession] = feature_link
+    return ftp_urls
 
 
+def download_feature_tables(ftp_links, out_dir):
+    with open(out_dir / "download_log.txt", "w") as log_fhand:
+        downloaded_files = {}
+        feature_tables = out_dir / "feature_tables"
+        if not feature_tables.exists():
+            feature_tables.mkdir(parents=True)
+        for accession, ftp_link in ftp_links.items():
+            out_file = feature_tables / ftp_link.name
+            if not out_file.is_file():
+                cmd = f'wget {ftp_link} --directory-prefix={feature_tables}'
+                cmd = run(cmd, shell=True, capture_output=True)
+                if cmd.returncode == 0:
+                    msg = f'{accession} {ftp_link} downloaded successfully\n'
+                else:
+                    msg = f'{accession} {ftp_link} download failed {cmd.stderr}\n'
+            else:
+                msg = f'{accession} {ftp_link} download done already \n'
+            
+            log_fhand.write(msg)
 
 def main():
     args = get_arguments()
-    out_dir = args["out"]
-    if not out_dir.exists():
-        out_dir.mkdir(parents=True, exist_ok=True)
-
-    with open(args["metadata"]) as f:
-        accessions = set(row["Genome"] for row in csv.DictReader(f, delimiter=","))
-
-    for acc in accessions:
-
-        print(f"Processing {acc}...")
-
-        try:
-            # Obtener resumen del ensamblado desde datasets
-            cmd = [
-                "datasets",
-                "summary",
-                "genome",
-                "accession",
-                acc,
-            ]
-
-            result = subprocess.run(
-                " ".join(cmd),
-                capture_output=True,
-                text=True,
-                check=True,
-                shell=True,
-            )
-
-
-            data = json.loads(result.stdout)
-
-            report = data["reports"][0]
-            print(report)
-
-            ftp_path = report["assembly_info"]["assembly_accession"]
-
-            # Buscar el nombre exacto del ensamblado
-            assembly_name = report["assembly_info"]["assembly_name"]
-
-            assembly_dir = f"{acc}_{assembly_name}".replace(" ", "_")
-
-            # Construir URL FTP
-            prefix = (
-                f"https://ftp.ncbi.nlm.nih.gov/genomes/all/"
-                f"{acc[0:3]}/"
-                f"{acc[4:7]}/"
-                f"{acc[7:10]}/"
-                f"{acc[10:13]}/"
-                f"{acc.split('.')[0][13:]}/"
-                f"{assembly_dir}"
-            )
-
-            feature_url = (
-                f"{prefix}/{assembly_dir}_feature_table.txt.gz"
-            )
-
-            outfile = out_dir / f"{acc}_feature_table.txt.gz"
-
-            print(f"Downloading {feature_url}")
-
-            r = requests.get(feature_url, stream=True, timeout=60)
-
-            if r.status_code == 200:
-                with open(outfile, "wb") as fh:
-                    for chunk in r.iter_content(chunk_size=8192):
-                        fh.write(chunk)
-
-                print(f"Saved: {outfile}")
-
-            else:
-                print(f"Not found ({r.status_code})")
-
-        except Exception as e:
-            print(f"ERROR: {acc}: {e}")
-
+    seqIDs_by_accession = get_sequences_ids_by_accession(args["metadata"])
+    filter = [accession for accession in seqIDs_by_accession]
+    accession_genbank_ftp = get_ftp_link_by_accession(args["genbank"], filter=filter)
+    accession_refseq_ftp = get_ftp_link_by_accession(args["refseq"], filter=filter)
+    merged_ftp_links = accession_genbank_ftp | accession_refseq_ftp
+    download_feature_tables(merged_ftp_links, args["out"])
+    
 
 if __name__ == "__main__":
     main()
