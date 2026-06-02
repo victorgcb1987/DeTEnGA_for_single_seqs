@@ -93,6 +93,7 @@ def download_feature_tables(ftp_links, out_dir):
                         msg = f'{accession} {ftp_link} downloaded successfully\n'
                     else:
                         msg = f'{accession} {ftp_link} download failed {cmd.stderr}\n'
+                        returncode = 1
                 else:
                     msg = f'{accession} {ftp_link} download done already \n'
                     returncode = 0
@@ -113,8 +114,8 @@ def retrive_equivalence_info(feature_table):
                 line = line.rstrip().split("\t")
                 feat = line[0]
                 if feat == "mRNA":
-                    mrnaID = line[9]
-                    proteinID = line[10]
+                    mrnaID = line[10]
+                    proteinID = line[11]
                     equivalences[proteinID] = mrnaID
     return equivalences
 
@@ -124,8 +125,6 @@ def get_seqs_equivalences(feature_tables, seqsIDs_by_accession):
         feature_table_file = feature_tables[accession]
         if feature_table_file["returncode"] == 0:
             equivalences = retrive_equivalence_info(feature_table_file["file"])
-            print(accession)
-            print(equivalences)
 
 
 def main():
