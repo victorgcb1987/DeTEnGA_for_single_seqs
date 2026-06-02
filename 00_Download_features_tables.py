@@ -84,7 +84,7 @@ def download_feature_tables(ftp_links, out_dir):
         feature_tables = out_dir / "feature_tables"
         if not feature_tables.exists():
             feature_tables.mkdir(parents=True)
-        with open(out_dir / "download_log.txt", "w") as log_fhand:
+        with open(feature_tables / "download_log.txt", "w") as log_fhand:
             for accession, ftp_link in ftp_links.items():
                 out_file = feature_tables / ftp_link.name
                 if not out_file.is_file():
@@ -155,21 +155,40 @@ def get_feature_table_url(accession, parent_url):
     )
 
 def find_suppressed_accessions(seqIDs_by_accession, downloaded_files, out_dir):
+    feature_tables = out_dir / "feature_tables"
 
     url = "https://ftp.ncbi.nlm.nih.gov/genomes/all/"
-    for accession in seqIDs_by_accession:
-        if accession not in downloaded_files:
-            reformat = accession.split(".")[0].replace("_", "")
-            letter_code = reformat[0:3]
-            first_part = reformat[3:6]
-            second_part = reformat[6:9]
-            third_part = reformat[9:]
-            url_part = f'{letter_code}/{first_part}/{second_part}/{third_part}/'
-            parent_url = url+url_part
-            print(parent_url)
-            table_url = get_feature_table_url(accession, parent_url)
-            print(table_url)
+    with open(feature_tables / "suppressed_accession_download.txt", "w") as log_fhand:
+        for accession in seqIDs_by_accession:
+            if accession not in downloaded_files:
+                reformat = accession.split(".")[0].replace("_", "")
+                letter_code = reformat[0:3]
+                first_part = reformat[3:6]
+                second_part = reformat[6:9]
+                third_part = reformat[9:]
+                url_part = f'{letter_code}/{first_part}/{second_part}/{third_part}/'
+                parent_url = url+url_part
+                ftp_link = get_feature_table_url(accession, parent_url)
+                if ftp_link:
+                    out_file = feature_tables / Path(ftp_link).name
+                    if not out_file.is_file():
+                        cmd = f'curl {ftp_link} -o {out_file}'
+                        cmd = run(cmd, shell=True, capture_output=True)
+                        returncode = cmd.returncode
+                        if returncode == 0:
+                            msg = f'{accession} {ftp_link} downloaded successfully\n'
+                        else:
+                            msg = f'{accession} {ftp_link} download failed {cmd.stderr}\n'
+                            returncode = 1
+                    else:
+                        msg = f'{accession} {ftp_link} download done already \n'
+                        returncode = 0
+                log_fhand.write(msg)
+                downloaded_files[accession] = {"file": out_file, 
+                                               "returncode": returncode}
 
+
+        return downloaded_files
 
 
 def main():
@@ -187,7 +206,8 @@ def main():
     downloaded_files = download_feature_tables(accession_refseq_ftp, args["out"])
     print(f'Found ftp URLs for {len(downloaded_files)} of {len(seqIDs_by_accession)}')
     print("#6 Trying to reconstruct ftp URLs for supressed accessions")
-    suppressed_accessions_links = find_suppressed_accessions(seqIDs_by_accession, downloaded_files, args["out"])
+    downloaded_files = find_suppressed_accessions(seqIDs_by_accession, downloaded_files, args["out"])
+    print(len(downloaded_files))
     print("#7: get protein-mrna equivalence")
     equivalences = get_seqs_equivalences(downloaded_files, seqIDs_by_accession)
     print(equivalences)
