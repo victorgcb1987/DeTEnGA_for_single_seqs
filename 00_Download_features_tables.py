@@ -1,6 +1,8 @@
 import argparse
 import csv
 import gzip
+import re
+import requests
 import sys
 
 from subprocess import run
@@ -134,6 +136,41 @@ def get_seqs_equivalences(feature_tables, seqsIDs_by_accession):
     return equivalences
 
 
+def get_feature_table_url(accession, parent_url):
+    html = requests.get(parent_url).text
+
+    m = re.search(
+        rf'({re.escape(accession)}[^"/]*)/',
+        html
+    )
+
+    if not m:
+        return None
+
+    dirname = m.group(1)
+
+    return (
+        f"{parent_url}/{dirname}/"
+        f"{dirname}_feature_table.txt.gz"
+    )
+
+def find_suppressed_accessions(seqIDs_by_accession, downloaded_files, out_dir):
+
+    url = "https://ftp.ncbi.nlm.nih.gov/genomes/all/"
+    for accession in seqIDs_by_accession:
+        if accession not in downloaded_files:
+            letter_code = accession[0:3]
+            first_part = accession[3:6]
+            second_part = accession[6:9]
+            third_part = accession[9:]
+            url_part = f'{letter_code}/{first_part}/{second_part}/{third_part}/'
+            parent_url = url+url_part
+            print(parent_url)
+            table_url = get_feature_table_url(accession, parent_url)
+            print(table_url)
+
+
+
 def main():
     args = get_arguments()
     print("#1: Getting accessions from metadata")
@@ -147,7 +184,10 @@ def main():
     merged_ftp_links = accession_genbank_ftp | accession_refseq_ftp
     print("#5: downloading feature tables")
     downloaded_files = download_feature_tables(merged_ftp_links, args["out"])
-    print("#6: get protein-mrna equivalence")
+    print(f'Found ftp URLs for {len(downloaded_files)} of {len(seqIDs_by_accession)}')
+    print("#6 Trying to reconstruct ftp URLs from supressed accessions")
+    suppressed_accessions_links = find_suppressed_accessions(seqIDs_by_accession, downloaded_files)
+    print("#7: get protein-mrna equivalence")
     equivalences = get_seqs_equivalences(downloaded_files, seqIDs_by_accession)
     print(equivalences)
 
