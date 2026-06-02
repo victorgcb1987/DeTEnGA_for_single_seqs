@@ -121,11 +121,16 @@ def retrive_equivalence_info(feature_table):
 
 
 def get_seqs_equivalences(feature_tables, seqsIDs_by_accession):
+    equivalences = {}
     for accession, seqIDs in seqsIDs_by_accession.items():
-        feature_table_file = feature_tables[accession]
+        try: 
+            feature_table_file = feature_tables[accession]
+        except:
+            print(f'accession {accession} not found')
+            continue
         if feature_table_file["returncode"] == 0:
-            equivalences = retrive_equivalence_info(feature_table_file["file"])
-            print(equivalences)
+            equivalence = retrive_equivalence_info(feature_table_file["file"])
+            equivalences[accession] = equivalence
 
 
 def main():
@@ -143,7 +148,7 @@ def main():
     downloaded_files = download_feature_tables(merged_ftp_links, args["out"])
     print("#6: get protein-mrna equivalence")
     equivalences = get_seqs_equivalences(downloaded_files, seqIDs_by_accession)
-    
+    print(equivalences)
 
 if __name__ == "__main__":
     main()
