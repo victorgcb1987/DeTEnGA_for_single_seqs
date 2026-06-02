@@ -177,13 +177,13 @@ def main():
     seqIDs_by_accession = get_sequences_ids_by_accession(args["metadata"])
     filter = [accession for accession in seqIDs_by_accession]
     print("#2: getting ftp urls from genbanks")
-    accession_genbank_ftp = get_ftp_link_by_accession(args["genbank"], filter=filter)
+    #accession_genbank_ftp = get_ftp_link_by_accession(args["genbank"], filter=filter)
     print("#3: gettingftp urls from refseqs")
     accession_refseq_ftp = get_ftp_link_by_accession(args["refseq"], filter=filter)
     print("#4: merging data")
-    merged_ftp_links = accession_genbank_ftp | accession_refseq_ftp
+    #merged_ftp_links = accession_genbank_ftp | accession_refseq_ftp
     print("#5: downloading feature tables")
-    downloaded_files = download_feature_tables(merged_ftp_links, args["out"])
+    downloaded_files = download_feature_tables(accession_refseq_ftp, args["out"])
     print(f'Found ftp URLs for {len(downloaded_files)} of {len(seqIDs_by_accession)}')
     print("#6 Trying to reconstruct ftp URLs from supressed accessions")
     suppressed_accessions_links = find_suppressed_accessions(seqIDs_by_accession, downloaded_files, args["out"])
