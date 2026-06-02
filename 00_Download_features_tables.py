@@ -72,7 +72,7 @@ def get_ftp_link_by_accession(file, filter=[]):
             ftp = row["ftp_path"]
             suffix = ftp.split("/")[-2]
             feature_link = f'{ftp}{suffix}_feature_table.txt.gz'
-            ftp_urls[accession] = feature_link
+            ftp_urls[accession] = Path(feature_link)
     return ftp_urls
 
 
@@ -98,11 +98,16 @@ def download_feature_tables(ftp_links, out_dir):
 
 def main():
     args = get_arguments()
+    print("#1: Getting accessions from metadata")
     seqIDs_by_accession = get_sequences_ids_by_accession(args["metadata"])
     filter = [accession for accession in seqIDs_by_accession]
+    print("#2: getting ftp urls from genbanks")
     accession_genbank_ftp = get_ftp_link_by_accession(args["genbank"], filter=filter)
+    print("#3: gettingftp urls from refseqs")
     accession_refseq_ftp = get_ftp_link_by_accession(args["refseq"], filter=filter)
+    print("#4: merging data")
     merged_ftp_links = accession_genbank_ftp | accession_refseq_ftp
+    print("#5: Downloading feature tables")
     download_feature_tables(merged_ftp_links, args["out"])
     
 
