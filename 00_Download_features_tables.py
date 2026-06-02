@@ -1,5 +1,6 @@
 import argparse
 import csv
+import gzip
 import sys
 
 from subprocess import run
@@ -87,14 +88,43 @@ def download_feature_tables(ftp_links, out_dir):
                 if not out_file.is_file():
                     cmd = f'curl {ftp_link} -o {out_file}'
                     cmd = run(cmd, shell=True, capture_output=True)
-                    if cmd.returncode == 0:
+                    returncode = cmd.returncode
+                    if returncode == 0:
                         msg = f'{accession} {ftp_link} downloaded successfully\n'
                     else:
                         msg = f'{accession} {ftp_link} download failed {cmd.stderr}\n'
                 else:
                     msg = f'{accession} {ftp_link} download done already \n'
-            
+                    returncode = 0
                 log_fhand.write(msg)
+                downloaded_files[accession] = {"file": out_file, 
+                                               "returncode": returncode}  
+
+        return downloaded_files
+
+
+def retrive_equivalence_info(feature_table):
+    equivalences = {}
+    with gzip.open(feature_table, "r") as feat_fhand:
+        for line in feat_fhand:
+            if line.startswith("#") or not line:
+                continue
+            else:
+                line = line.rstrip().split("\t")
+                feat = line[0]
+                if feat == "mRNA":
+                    mrnaID = line[9]
+                    proteinID = line[10]
+                    equivalences[proteinID] = mrnaID
+    return equivalences
+
+
+def get_seqs_equivalences(feature_tables, seqsIDs_by_accession):
+    for accession, seqIDs in seqsIDs_by_accession.items():
+        feature_table_file = feature_tables[accession]
+        if feature_table_file["returncode"] == 0:
+            equivalences = retrive_equivalence_info(feature_table_file)
+
 
 def main():
     args = get_arguments()
@@ -107,8 +137,10 @@ def main():
     accession_refseq_ftp = get_ftp_link_by_accession(args["refseq"], filter=filter)
     print("#4: merging data")
     merged_ftp_links = accession_genbank_ftp | accession_refseq_ftp
-    print("#5: Downloading feature tables")
-    download_feature_tables(merged_ftp_links, args["out"])
+    print("#5: downloading feature tables")
+    downloaded_files = download_feature_tables(merged_ftp_links, args["out"])
+    print("#6: get protein-mrna equivalence")
+    equivalences = get_seqs_equivalence(downloaded_files, seqIDs_by_accession)
     
 
 if __name__ == "__main__":
