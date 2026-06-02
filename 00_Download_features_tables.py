@@ -186,7 +186,7 @@ def main():
     downloaded_files = download_feature_tables(merged_ftp_links, args["out"])
     print(f'Found ftp URLs for {len(downloaded_files)} of {len(seqIDs_by_accession)}')
     print("#6 Trying to reconstruct ftp URLs from supressed accessions")
-    suppressed_accessions_links = find_suppressed_accessions(seqIDs_by_accession, downloaded_files)
+    suppressed_accessions_links = find_suppressed_accessions(seqIDs_by_accession, downloaded_files, args["out"])
     print("#7: get protein-mrna equivalence")
     equivalences = get_seqs_equivalences(downloaded_files, seqIDs_by_accession)
     print(equivalences)
