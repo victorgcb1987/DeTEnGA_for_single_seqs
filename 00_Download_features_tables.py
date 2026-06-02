@@ -124,6 +124,8 @@ def get_seqs_equivalences(feature_tables, seqsIDs_by_accession):
         feature_table_file = feature_tables[accession]
         if feature_table_file["returncode"] == 0:
             equivalences = retrive_equivalence_info(feature_table_file)
+            print(accession)
+            print(equivalences)
 
 
 def main():
