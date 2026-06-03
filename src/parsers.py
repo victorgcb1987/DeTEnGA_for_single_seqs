@@ -44,6 +44,7 @@ def get_pfams_from_interpro_query(fhand):
                     for key, value in genes.items()}
     return sorted_genes
 
+
 def classify_pfams(interpro, te_pfams):
     for gene, pfams in interpro.items():
         for pfam in pfams:
@@ -66,32 +67,32 @@ def parse_TEsort_output(fhand):
     return output
 
 
-def classify_protein(interpro_classified, tesort_output):
-    print(interpro_classified, tesort_output)
+def classify_protein(interpro_classified, tesort_output, equivalences):
     summary = []
-    for protein, values in interpro_classified.items():
+    for protein, mrna in equivalences.items():
         row = {"ProtID": protein}
-        transposable = False
-        no_transposable = False
-        pfams_ids = []
-        pfams_descriptions = []
-        for value in values:
-            pfams_ids.append(value[0])
-            pfams_descriptions.append(value[1])
-            if "TE" in value:
-                transposable = True
-            if "NT" in value:
-                no_transposable = True
-        if transposable and not no_transposable:
-            status = "transposable_element"
-        if not transposable and no_transposable:
-            status = "coding_sequence"
-        if transposable and no_transposable:
-            status = "mixed"
-        row["interpro_status"] = status
-        row["pfams_ids"] = "|".join(pfams_ids)
-        row["pfams_descriptions"] = "|".join(pfams_descriptions)
-        transcript_tesort = tesort_output.get(transcript, None)
+        if protein not in interpro_classified:
+            status = "NA"
+        else:
+            transposable = False
+            no_transposable = False
+            pfams_ids = []
+            pfams_descriptions = []
+            for value in interpro_classified[protein]:
+                pfams_ids.append(value[0])
+                pfams_descriptions.append(value[1])
+                if "TE" in value:
+                    transposable = True
+                if "NT" in value:
+                    no_transposable = True
+            if transposable and not no_transposable:
+                status = "transposable_element"
+            if not transposable and no_transposable:
+                status = "coding_sequence"
+            if transposable and no_transposable:
+                status = "mixed"
+
+        transcript_tesort = tesort_output.get(mrna, None)
         if transcript_tesort is not None:
             row["tesort_domains"] = transcript_tesort["domains"]
             row["tesort_complete"] = transcript_tesort["complete"]
@@ -102,20 +103,12 @@ def classify_protein(interpro_classified, tesort_output):
             row["tesort_complete"] = "NA"
             row["tesort_class"] = "NA"
             row["tesort_strand"] = "NA"
+
+        row["interpro_status"] = status
+        row["pfams_ids"] = "|".join(pfams_ids)
+        row["pfams_descriptions"] = "|".join(pfams_descriptions)     
         row["detenga_status"] = detenga_status(row)
         summary.append(row)
-    for transcript, values in tesort_output.items():
-        if transcript not in interpro_classified:
-            row = {"transcript": transcript,
-                   "interpro_status": "NA",
-                   "pfams_ids": "NA",
-                   "pfams_descriptions": "NA",
-                   "tesort_domains": values["domains"],
-                   "tesort_complete": values["complete"],
-                   "tesort_class": values["classification"],
-                   "tesort_strand": values["strand"]}
-            row["detenga_status"] = detenga_status(row) 
-            summary.append(row)
     return summary
 
 
@@ -137,6 +130,8 @@ def detenga_status(row):
         status = "P0Mte"
     if row["interpro_status"] == "NA" and row["tesort_domains"] == "NA":
         status = "P0M0"
+    if row["interpro_status"] == "NA" and row["tesort_domains"] != "NA":
+        status = "P0Mte"
     return status
 
 

@@ -115,6 +115,8 @@ def main():
     emit_message(msg, log_fhand)
     found_sequences, not_found_sequences, messages = search_sequences(metadata, args["input"])
 
+        
+
     for msg in messages:
         emit_message(msg, log_fhand)
 
@@ -184,7 +186,6 @@ def main():
             msg = f'No stop codon file for {kingdom} found. Skipping InterProScan analysis'
 
 
-
     for kingdom, outputs in analysis_outputs.items():
         if "TEsorter" not in outputs or "interpro" not in outputs:
             msg = f'Missing analysis for {kingdom}. Skipping'
@@ -200,8 +201,14 @@ def main():
             TE_pfams = get_pfams_from_db(database)
             interpro = get_pfams_from_interpro_query(interpro_fhand)
             classified_pfams = classify_pfams(interpro, TE_pfams)
-            print(classified_pfams)
-            #protein_class = classify_protein(classified_pfams, te_sorter_output)
+            equivalences = {}
+            for hog, members in found_sequences.items():
+                 for member in members:
+                     if member["kingdom"] == kingdom:
+                        equivalences[member["proteinID"]] = member["mrnaID"]
+            protein_class = classify_protein(classified_pfams, te_sorter_output, 
+                                             equivalences)
+            print(protein_class)
         
 
 
