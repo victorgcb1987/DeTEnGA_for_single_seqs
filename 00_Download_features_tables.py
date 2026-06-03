@@ -191,6 +191,27 @@ def find_suppressed_accessions(seqIDs_by_accession, downloaded_files, out_dir):
 
         return downloaded_files
 
+def add_equivalences_to_metadata(metadata, equivalences, out_dir):
+    outfile = out_dir / f'{metadata.stem}_equivalences_added.csv'
+    with open (outfile, "w") as out_fhand:
+        header = "Genome,HOG,Protein,mRNA,SpName,Kingdom,Category\n"
+        outfile.write(header)
+        with open(metadata) as metadata_fhand:
+            for row in csv.DictReader(metadata_fhand, delimiter="\t"):
+                genome = row["Genome"]
+                hog = row["HOG"]
+                protein = row["Protein"]
+                if genome in equivalences:
+                    mRNA = equivalences[genome][protein]
+                else:
+                    mRNA = "N/A"
+                species = row["SpName"]
+                kingdom = row["Kingdom"]
+                category = row["Category"]
+                outfile.write(f'{genome},{hog},{protein},{mRNA},{species},{kingdom},{category}\n')
+                outfile.flush()
+    return outfile
+
 
 def main():
     args = get_arguments()
@@ -208,10 +229,13 @@ def main():
     print(f'Found ftp URLs for {len(downloaded_files)} of {len(seqIDs_by_accession)}')
     print("#6 Trying to reconstruct ftp URLs for supressed accessions and download")
     downloaded_files = find_suppressed_accessions(seqIDs_by_accession, downloaded_files, args["out"])
-    print(len(downloaded_files))
     print("#7: get protein-mrna equivalence")
     equivalences = get_seqs_equivalences(downloaded_files, seqIDs_by_accession)
-    print(equivalences)
+    print("#8: Adding equivalences to metadata file")
+    outfile = add_equivalences_to_metadata
+    print(f'Output file: {outfile}')
+
+    
 
 if __name__ == "__main__":
     main()
