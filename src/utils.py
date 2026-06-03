@@ -48,12 +48,15 @@ def select_isoform(sequence_dir, protein_sequence,
     
     mrna_records = SeqIO.parse(mrna_sequence, "fasta")
     selected_mrna_outpath = sequence_dir / "mrna_selected_isoform.fna"
+    mrna_found = False
     if mrna_id:
+        mrna_id_check = mrna_id.split(".")[0]
         for record in mrna_records:
             if record.id == mrna_id:
                 selected_mrna_record = record
+                mrna_found = True
                 break
-    else:
+    if not mrna_found:
         mrna_lengths = []
         mrna_records = []
         #Sometimes, for only one protein can appear non coding transcripts
