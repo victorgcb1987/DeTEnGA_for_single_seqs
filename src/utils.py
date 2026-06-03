@@ -52,10 +52,8 @@ def select_isoform(sequence_dir, protein_sequence,
         #we are going to get the coding ones (starts with XM)
         protein_records = SeqIO.parse(protein_sequence, "fasta")
         for record in protein_records:
-            print(record.id)
-            if record.id.startswith("XM"):
-                protein_seqs.append(record)
-                protein_lengths.append(len(record.seq))
+            protein_seqs.append(record)
+            protein_lengths.append(len(record.seq))
         longest_idx = protein_lengths.index(max(protein_lengths))
         selected_mrna_record = protein_seqs[longest_idx]
 
@@ -67,7 +65,6 @@ def select_isoform(sequence_dir, protein_sequence,
     selected_mrna_outpath = sequence_dir / "mrna_selected_isoform.fna"
     mrna_found = False
     if mrna_id:
-        mrna_id_check = mrna_id.split(".")[0]
         for record in mrna_records:
             if record.id == mrna_id:
                 selected_mrna_record = record
