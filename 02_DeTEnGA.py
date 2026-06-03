@@ -157,7 +157,7 @@ def main():
                 emit_message(msg, log_fhand)
                 continue
             else:
-                stop_codons_out = remove_stop_codons(input_fpaths["fpath"])
+                stop_codons_out = remove_stop_codons(fpath)
             
     
 
