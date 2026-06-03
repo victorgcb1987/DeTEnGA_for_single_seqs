@@ -71,10 +71,12 @@ def classify_protein(interpro_classified, tesort_output, equivalences):
     summary = []
     for protein, mrna in equivalences.items():
         row = {}
-        print(protein)
+        status = ""
+        pfams_ids = ""
+        pfams_descriptions = ""
         transposable = False
         no_transposable = False
-        status = ""
+        
         row = {"ProtID": protein}
         if protein not in interpro_classified:
             status = "NA"
