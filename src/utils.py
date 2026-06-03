@@ -38,13 +38,30 @@ def select_isoform(sequence_dir, protein_sequence,
                            mrna_sequence, protein_id, mrna_id=""):
 
     protein_records = SeqIO.parse(protein_sequence, "fasta")
+    protein_found = False
     for record in protein_records:
         if record.id == protein_id:
             selected_protein_record = record
             selected_prot_outpath = sequence_dir / "protein_selected_isoform.faa"
-            with open(selected_prot_outpath, "w") as prot_out_fhand:
-                SeqIO.write(selected_protein_record, prot_out_fhand, "fasta")
-                break
+            protein_found = True
+            break
+    if not protein_found:
+        protein_lengths = []
+        protein_seqs = []
+        #Sometimes, for only one protein can appear non coding transcripts
+        #we are going to get the coding ones (starts with XM)
+        protein_records = SeqIO.parse(protein_sequence, "fasta")
+        for record in protein_records:
+            print(record.id)
+            if record.id.startswith("XM"):
+                protein_seqs.append(record)
+                protein_lengths.append(len(record.seq))
+        longest_idx = protein_lengths.index(max(protein_lengths))
+        selected_mrna_record = protein_seqs[longest_idx]
+
+    with open(selected_prot_outpath, "w") as prot_out_fhand:
+        SeqIO.write(selected_protein_record, prot_out_fhand, "fasta")
+
     
     mrna_records = SeqIO.parse(mrna_sequence, "fasta")
     selected_mrna_outpath = sequence_dir / "mrna_selected_isoform.fna"
