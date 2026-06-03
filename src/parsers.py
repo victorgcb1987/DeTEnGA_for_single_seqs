@@ -70,8 +70,10 @@ def parse_TEsort_output(fhand):
 def classify_protein(interpro_classified, tesort_output, equivalences):
     summary = []
     for protein, mrna in equivalences.items():
+        status = ""
         row = {"ProtID": protein}
         if protein not in interpro_classified:
+            print(protein)
             status = "NA"
         else:
             transposable = False
@@ -131,8 +133,6 @@ def detenga_status(row):
         status = "P0Mte"
     if row["interpro_status"] == "NA" and row["tesort_domains"] == "NA":
         status = "P0M0"
-    if row["interpro_status"] == "NA" and row["tesort_domains"] != "NA":
-        status = "P0Mte"
     return status
 
 
