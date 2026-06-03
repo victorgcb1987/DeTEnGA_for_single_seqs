@@ -116,7 +116,7 @@ def main():
 
     input_fpaths = generate_input_files(found_sequences, out_dir)
 
-
+    analysis_outputs = {}
     msg = "Analising RNA transposable elements with TEsorter"
     emit_message(msg, log_fhand)
     for kind, fpath in input_fpaths.items():
@@ -137,8 +137,10 @@ def main():
             TEsorter_results = run_TEsorter(fpath, rex_db, args["threads"])
             if TEsorter_results["returncode"] == 99:
                 msg = f'TEsorter already done for {kingdom}. Skipping Tesorter analysis'
+                analysis_outputs[kingdom] = {"TEsorter": TEsorter_results["out_fpath"]}
             elif TEsorter_results["returncode"] == 0:
                 msg = f'TEsorter succesfully run for {kingdom}.'
+                analysis_outputs[kingdom] = {"TEsorter": TEsorter_results["out_fpath"]}
             else:
                 msg = f'TEsorter failed for protein {kingdom}: {TEsorter_results["msg"]}'
             
@@ -151,13 +153,42 @@ def main():
 
     for kind, fpath in input_fpaths.items():
         if kind.startswith("protein_"):
-
+            kingdom = kind.split("_")[-1]
             if os.path.getsize(fpath) == 0:
                 msg = f'protein file {fpath} is empty. Skipping file'
                 emit_message(msg, log_fhand)
                 continue
             else:
                 stop_codons_out = remove_stop_codons(fpath)
+                analysis_outputs[kingdom]["no_stop_proteins"] = stop_codons_out
+
+    msg = "Analyze protein domains with interproscan"
+    emit_message(msg, log_fhand)
+    for kingdom in analysis_outputs:
+        if "no_stop_proteins" in analysis_outputs[kingdom]:
+            interpro_results = run_interpro(stop_codons_out, args["threads"])
+            if interpro_results["returncode"] == 99:
+                msg = 'InterproScan already done. Skipping Interpro analysis'
+                analysis_outputs[kingdom]["interpro"] = interpro_results["out_fpath"]
+            elif interpro_results["returncode"] == 0:
+                msg = 'InteproScan succesfully run'
+                analysis_outputs[kingdom]["interpro"] = interpro_results["out_fpath"]
+            else:
+                msg = f'InteproScan failed: {interpro_results["msg"]}'
+            emit_message(msg, log_fhand)
+        else:
+            msg = f'No stop codon file for {kingdom} found. Skipping InterProScan analysis'
+
+
+
+    print(analysis_outputs)
+
+
+
+
+
+    
+    
             
     
 
@@ -165,16 +196,9 @@ def main():
        
 
     #Run interproscan
-    msg = "Analyze protein domains with interproscan"
-    emit_message(msg, log_fhand)
-    interpro_results = run_interpro(stop_codons_out, args["threads"])
-    if interpro_results["returncode"] == 99:
-        msg = 'InterproScan already done. Skipping Interpro analysis'
-    elif interpro_results["returncode"] == 0:
-        msg = 'InteproScan succesfully run'
-    else:
-        msg = f'InteproScan failed: {interpro_results["msg"]}'
-    emit_message(msg, log_fhand)
+    
+    
+    
     database = REXDB_PFAMS[database]
     TE_pfams = get_pfams_from_db(database)
 
