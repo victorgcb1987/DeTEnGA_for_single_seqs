@@ -148,6 +148,7 @@ def write_summary(summary, out_fhand, hogs):
     out_fhand.write("TEsort_strand,DeTEnGA_status\n")
     out_fhand.flush()
     for row in summary:
+        print(row)
         line_total = "" 
         line_total += f'{row["protID"]},{row["mRNAID"]},'
         line_total += f'{hogs[row["protID"]]},'
