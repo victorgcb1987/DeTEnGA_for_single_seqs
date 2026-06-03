@@ -70,13 +70,13 @@ def parse_TEsort_output(fhand):
 def classify_protein(interpro_classified, tesort_output, equivalences):
     summary = []
     for protein, mrna in equivalences.items():
+        transposable = False
+        no_transposable = False
         status = ""
         row = {"ProtID": protein}
         if protein not in interpro_classified:
             status = "NA"
         else:
-            transposable = False
-            no_transposable = False
             pfams_ids = []
             pfams_descriptions = []
             for value in interpro_classified[protein]:
