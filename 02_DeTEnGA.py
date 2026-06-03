@@ -190,12 +190,19 @@ def main():
             msg = f'Missing analysis for {kingdom}. Skipping'
             emit_message(msg, log_fhand)
             continue
-        database = REXDB_PFAMS[TRANSLATION[kingdom]]
-        TE_pfams = get_pfams_from_db(database)
+        
         msg = f'Parsing results for {kingdom}'
         with open(outputs["TEsorter"]) as TEsorter_fhand:
             te_sorter_output = parse_TEsort_output(TEsorter_fhand)
-            print(te_sorter_output)
+
+        with open(interpro_results["out_fpath"]) as interpro_fhand:
+            database = REXDB_PFAMS[TRANSLATION[kingdom]]
+            TE_pfams = get_pfams_from_db(database)
+            interpro = get_pfams_from_interpro_query(interpro_fhand)
+            classified_pfams = classify_pfams(interpro, TE_pfams)
+            print(classified_pfams)
+            #protein_class = classify_protein(classified_pfams, te_sorter_output)
+        
 
 
 
@@ -212,13 +219,6 @@ def main():
 
        
 
-    #Run interproscan
-    
-    
-    
-    
-    #         with open(TEsorter_results["out_fpath"]) as TEsorter_fhand:
-    #             te_sorter_output = parse_TEsort_output(TEsorter_fhand)
         
     #         with open(interpro_results["out_fpath"]) as interpro_fhand:
     #             interpro = get_pfams_from_interpro_query(interpro_fhand)
