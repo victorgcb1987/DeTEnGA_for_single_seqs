@@ -70,6 +70,7 @@ def parse_TEsort_output(fhand):
 def classify_protein(interpro_classified, tesort_output, equivalences):
     summary = []
     for protein, mrna in equivalences.items():
+        print(protein)
         transposable = False
         no_transposable = False
         status = ""
@@ -95,7 +96,6 @@ def classify_protein(interpro_classified, tesort_output, equivalences):
 
         transcript_tesort = tesort_output.get(mrna, None)
         if transcript_tesort is not None:
-            print(protein, mrna)
             row["tesort_domains"] = transcript_tesort["domains"]
             row["tesort_complete"] = transcript_tesort["complete"]
             row["tesort_class"] = transcript_tesort["classification"]
@@ -115,6 +115,7 @@ def classify_protein(interpro_classified, tesort_output, equivalences):
 
 
 def detenga_status(row):
+    print(row["pfams_descriptions"])
     print(row["interpro_status"], row["tesort_domains"])
     status = "NA"
     if row["interpro_status"] == "coding_sequence" and row["tesort_domains"] == "NA":
@@ -133,6 +134,7 @@ def detenga_status(row):
         status = "P0Mte"
     if row["interpro_status"] == "NA" and row["tesort_domains"] == "NA":
         status = "P0M0"
+    print(status)
     return status
 
 
