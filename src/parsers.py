@@ -70,6 +70,7 @@ def parse_TEsort_output(fhand):
 def classify_protein(interpro_classified, tesort_output, equivalences):
     summary = []
     for protein, mrna in equivalences.items():
+        row = {}
         print(protein)
         transposable = False
         no_transposable = False
