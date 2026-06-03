@@ -191,7 +191,7 @@ def find_suppressed_accessions(seqIDs_by_accession, downloaded_files, out_dir):
         return downloaded_files
 
 def add_equivalences_to_metadata(metadata, equivalences, out_dir):
-    outfile = out_dir / f'{metadata.stem}_equivalences_added.csv'
+    outfile = out_dir / "feature_tables" / f'{metadata.stem}_equivalences_added.csv'
     with open (outfile, "w") as out_fhand:
         header = "Genome,HOG,Protein,mRNA,SpName,Kingdom,Category\n"
         out_fhand.write(header)
@@ -201,7 +201,7 @@ def add_equivalences_to_metadata(metadata, equivalences, out_dir):
                 hog = row["HOG"]
                 protein = row["Protein"]
                 if genome in equivalences:
-                    mRNA = equivalences[genome][protein]
+                    mRNA = equivalences[genome].get(protein, "N/A")
                 else:
                     mRNA = "N/A"
                 species = row["SpName"]
