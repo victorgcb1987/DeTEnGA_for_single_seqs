@@ -34,9 +34,14 @@ def generate_input_files(sequences, out_fpath):
     return outs
 
 
-def select_longest_isoform(sequence_dir, protein_sequence, mrna_sequence):
-    protein_sequences_lengths = []
+def select_isoform(sequence_dir, protein_sequence, 
+                           mrna_sequence, protein_id="", mrna_id=""):
+
     records = SeqIO.parse(protein_sequence, "fasta")
+    protein_records = SeqIO.parse(protein_sequence, "fasta")
+    for record in protein_records:
+        if record.id == protein_id:
+            protein_sequence = 
     for record in records:
         protein_sequences_lengths.append(len(record.seq))
     if len(protein_sequences_lengths) == 1:
@@ -83,17 +88,17 @@ def search_sequences(metadata, input_dir):
             mrna_sequence = sequence_dir / "rna.fna"
 
             if mrna_sequence.is_file() and protein_sequence.is_file():
-                protein_sequence, mrna_sequence, mrnaID, protID = select_longest_isoform(sequence_dir, 
-                                                                                 protein_sequence, 
-                                                                                 mrna_sequence)
+                protein_sequence, mrnaID = select_isoform(sequence_dir, 
+                                                          protein_sequence, 
+                                                          mrna_sequence,
+                                                          protein_id=member["proteinID"],
+                                                          mrna_id=member["mRNAID"])
+               
                 member.update({"protein": protein_sequence,
                                "mrna": mrna_sequence,
                                "main_dir": sequence_dir,
                                "mrnaID": mrnaID})
-                if protID:
-                    msg = f'{member["proteinID"]} was changed for {protID} because it was a longer insoform'
-                    messages.append(msg)
-                    member["proteinID"] = protID
+                
                 found_sequences[hog].append(member)
 
             else:

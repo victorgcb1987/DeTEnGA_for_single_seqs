@@ -13,23 +13,14 @@ def read_metadata(metadata_fhand):
         prot_metadata = {"proteinID": row["Protein"],
                          "species": row["SpName"],
                          "kingdom": row["Kingdom"].lower(),
-                         "category": (row["Category"])}
-        if not  hog in metadata:
+                         "category": row["Category"],
+                         "mRNAID": row["mRNA"]}
+        if not hog in metadata:
             metadata[row["HOG"]] = [prot_metadata]
         else:
             metadata[hog].append(prot_metadata)
     return metadata
 
-
-
-def parse_fof(input):
-    fof = {}
-    with open(input) as fhand:
-        for line in fhand:
-            label, fasta, gff = line.rstrip().split()
-            fof[label] = {"assembly": Path(fasta), 
-                          "annotation": Path(gff)}
-    return fof
 
 def get_pfams_from_db(fpath):
     pfams = {}

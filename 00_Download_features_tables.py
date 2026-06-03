@@ -201,9 +201,9 @@ def add_equivalences_to_metadata(metadata, equivalences, out_dir):
                 hog = row["HOG"]
                 protein = row["Protein"]
                 if genome in equivalences:
-                    mRNA = equivalences[genome].get(protein, "N/A")
+                    mRNA = equivalences[genome].get(protein, "")
                 else:
-                    mRNA = "N/A"
+                    mRNA = ""
                 species = row["SpName"]
                 kingdom = row["Kingdom"]
                 category = row["Category"]
