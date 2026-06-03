@@ -38,11 +38,11 @@ def select_isoform(sequence_dir, protein_sequence,
                            mrna_sequence, protein_id, mrna_id=""):
 
     protein_records = SeqIO.parse(protein_sequence, "fasta")
+    selected_prot_outpath = sequence_dir / "protein_selected_isoform.faa"
     protein_found = False
     for record in protein_records:
         if record.id == protein_id:
             selected_protein_record = record
-            selected_prot_outpath = sequence_dir / "protein_selected_isoform.faa"
             protein_found = True
             break
     if not protein_found:
