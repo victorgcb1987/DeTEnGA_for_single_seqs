@@ -126,7 +126,7 @@ def main():
                 msg = f'mRNA file {fpath} is empty. Skipping TEsorter analysis'
                 emit_message(msg, log_fhand)
                 continue
-            
+
             kingdom = kind.split("_")[-1]
             if kingdom == "viridiplantae":
                 rex_db = "rexdb-plant"
@@ -147,7 +147,20 @@ def main():
 
     msg = "Truncating protein sequence at first stop codon"
     emit_message(msg, log_fhand)
-    stop_codons_out = remove_stop_codons(input_fpaths["protein"])
+
+
+    for kind, fpath in input_fpaths.items():
+        if kind.startswith("protein_"):
+
+            if os.path.getsize(fpath) == 0:
+                msg = f'protein file {fpath} is empty. Skipping file'
+                emit_message(msg, log_fhand)
+                continue
+            else:
+                stop_codons_out = remove_stop_codons(input_fpaths["fpath"])
+            
+    
+
 
        
 
