@@ -186,7 +186,6 @@ def main():
 
 
     for kingdom, outputs in analysis_outputs.items():
-        print(outputs)
         if "TEsorter" not in outputs or "interpro" not in outputs:
             msg = f'Missing analysis for {kingdom}. Skipping'
             emit_message(msg, log_fhand)
@@ -194,7 +193,7 @@ def main():
         database = REXDB_PFAMS[TRANSLATION[kingdom]]
         TE_pfams = get_pfams_from_db(database)
         msg = f'Parsing results for {kingdom}'
-        with open(outputs["Tesorter"]) as TEsorter_fhand:
+        with open(outputs["TEsorter"]) as TEsorter_fhand:
             te_sorter_output = parse_TEsort_output(TEsorter_fhand)
             print(te_sorter_output)
 
