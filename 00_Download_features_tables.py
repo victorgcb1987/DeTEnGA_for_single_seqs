@@ -48,7 +48,7 @@ def get_arguments():
     if not output.exists():
         output.mkdir(parents=True)
     return {"out": output,
-            "metadata": parser.metadata,
+            "metadata": Path(parser.metadata),
             "genbank": parser.genbank,
             "refseq": parser.refseq}
 
