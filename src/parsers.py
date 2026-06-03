@@ -111,7 +111,8 @@ def classify_protein(interpro_classified, tesort_output, equivalences):
             row["tesort_strand"] = "NA"
 
         row["interpro_status"] = status
-        
+        row["pfams_ids"] = pfams_ids
+
         if not row["pfams_ids"]:
             row["pfams_ids"] = "NA"
         else:
