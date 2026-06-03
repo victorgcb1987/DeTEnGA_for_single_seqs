@@ -194,7 +194,7 @@ def add_equivalences_to_metadata(metadata, equivalences, out_dir):
     outfile = out_dir / f'{metadata.stem}_equivalences_added.csv'
     with open (outfile, "w") as out_fhand:
         header = "Genome,HOG,Protein,mRNA,SpName,Kingdom,Category\n"
-        outfile.write(header)
+        out_fhand.write(header)
         with open(metadata) as metadata_fhand:
             for row in csv.DictReader(metadata_fhand, delimiter="\t"):
                 genome = row["Genome"]
@@ -207,8 +207,8 @@ def add_equivalences_to_metadata(metadata, equivalences, out_dir):
                 species = row["SpName"]
                 kingdom = row["Kingdom"]
                 category = row["Category"]
-                outfile.write(f'{genome},{hog},{protein},{mRNA},{species},{kingdom},{category}\n')
-                outfile.flush()
+                out_fhand.write(f'{genome},{hog},{protein},{mRNA},{species},{kingdom},{category}\n')
+                out_fhand.flush()
     return outfile
 
 
@@ -231,7 +231,7 @@ def main():
     print("#7: get protein-mrna equivalence")
     equivalences = get_seqs_equivalences(downloaded_files, seqIDs_by_accession)
     print("#8: Adding equivalences to metadata file")
-    outfile = add_equivalences_to_metadata
+    outfile = add_equivalences_to_metadata(args["metadata"], equivalences, args["out"])
     print(f'Output file: {outfile}')
 
     
