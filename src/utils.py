@@ -78,7 +78,7 @@ def select_isoform(sequence_dir, protein_sequence,
         mrna_records = SeqIO.parse(mrna_sequence, "fasta")
         for record in mrna_records:
             print(record.id)
-            if record.id.startswith("XM"):
+            if not record.id.startswith("Y"):
                 mrna_seqs.append(record)
                 mrna_lengths.append(len(record.seq))
         longest_idx = mrna_lengths.index(max(mrna_lengths))
