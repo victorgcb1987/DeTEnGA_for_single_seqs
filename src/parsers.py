@@ -112,15 +112,16 @@ def classify_protein(interpro_classified, tesort_output, equivalences):
 
         row["interpro_status"] = status
         row["pfams_ids"] = "|".join(pfams_ids)
-        row["pfams_descriptions"] = "|".join(pfams_descriptions)     
+        if not pfams_descriptions:
+            row["pfams_descriptions"] = "NA" 
+        else:
+            row["pfams_descriptions"] = "|".join(pfams_descriptions)     
         row["detenga_status"] = detenga_status(row)
         summary.append(row)
     return summary
 
 
 def detenga_status(row):
-    print(row["pfams_descriptions"])
-    print(row["interpro_status"], row["tesort_domains"])
     status = "NA"
     if row["interpro_status"] == "coding_sequence" and row["tesort_domains"] == "NA":
         status = "PcpM0" 
@@ -138,7 +139,6 @@ def detenga_status(row):
         status = "P0Mte"
     if row["interpro_status"] == "NA" and row["tesort_domains"] == "NA":
         status = "P0M0"
-    print(status)
     return status
 
 
@@ -148,7 +148,6 @@ def write_summary(summary, out_fhand, hogs):
     out_fhand.write("TEsort_strand,DeTEnGA_status\n")
     out_fhand.flush()
     for row in summary:
-        print(row)
         line_total = "" 
         line_total += f'{row["ProtID"]},{row["mRNAID"]},'
         line_total += f'{hogs[row["ProtID"]]},'

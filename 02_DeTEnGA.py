@@ -216,57 +216,6 @@ def main():
             out_fpath = Path(out_dir / f'{kingdom}_TE_summary.csv')
             with open(out_fpath, "w") as out_fhand:
                 write_summary(protein_class, out_fhand, hogs)
-    #             summaries[label] = out_fpath
-    #             msg = "TE Summary for {} written in {}\n".format(label, out_fpath)
-    #             log_fhand.write(msg)
-    #             log_fhand.flush()
-            
            
-
-
-
-
-
-
-
-    
-    
-            
-    
-
-
-       
-
-        
-    #         with open(interpro_results["out_fpath"]) as interpro_fhand:
-    #             interpro = get_pfams_from_interpro_query(interpro_fhand)
-    #             classified_pfams = classify_pfams(interpro, TE_pfams)
-    
-    #         protein_class = classify_protein(classified_pfams, te_sorter_output)
-            
-    #         out_fpath = Path(out_dir / label / "{}_TE_summary.csv".format(label))
-    #         with open(out_fpath, "w") as out_fhand:
-    #             write_summary(te_summary, out_fhand)
-    #             summaries[label] = out_fpath
-    #             msg = "TE Summary for {} written in {}\n".format(label, out_fpath)
-    #             log_fhand.write(msg)
-    #             log_fhand.flush()
-    
-    # msg = "##STEP 6: Running stats on annotation files\n"
-    # print(msg)
-    # log_fhand.write(msg)
-    # log_fhand.flush()
-    # agat_results = run_agat(summaries, files)
-    # with open(args["out"]/ "combined_summaries.tsv", "w") as combined_summaries_fhand:
-    #     header = create_header()
-    #     combined_summaries_fhand.write(header)
-    #     for label, results in agat_results.items():
-    #         stats = get_stats(results["out_fpath"], summaries[label])
-    #         genome = files[label]["assembly"].stem
-    #         annotation = files[label]["annotation"].stem
-    #         row = get_row(label, genome, annotation, stats)
-    #         combined_summaries_fhand.write(row)
-
-
 if __name__ == "__main__":
     main()
