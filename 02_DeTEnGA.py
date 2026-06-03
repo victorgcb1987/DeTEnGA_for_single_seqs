@@ -208,10 +208,20 @@ def main():
                         equivalences[member["proteinID"]] = member["mrnaID"]
             protein_class = classify_protein(classified_pfams, te_sorter_output, 
                                              equivalences)
-            for row in protein_class:
-                print(row)
-        
-
+            hogs = {}
+            for hog, members in found_sequences.items():
+                 for member in members:
+                     if member["kingdom"] == kingdom:
+                        hogs[member["proteinID"]] = hog
+            out_fpath = Path(out_dir / f'{kingdom}_TE_summary.csv')
+            with open(out_fpath, "w") as out_fhand:
+                write_summary(protein_class, out_fhand, hogs)
+    #             summaries[label] = out_fpath
+    #             msg = "TE Summary for {} written in {}\n".format(label, out_fpath)
+    #             log_fhand.write(msg)
+    #             log_fhand.flush()
+            
+           
 
 
 

@@ -77,7 +77,8 @@ def classify_protein(interpro_classified, tesort_output, equivalences):
         transposable = False
         no_transposable = False
         
-        row = {"ProtID": protein}
+        row = {"ProtID": protein,
+               "mRNAID": mrna}
         if protein not in interpro_classified:
             status = "NA"
         else:
@@ -141,18 +142,19 @@ def detenga_status(row):
     return status
 
 
-def write_summary(summary, out_fhand):
-    out_fhand.write("Transcript_ID;Interpro_status;TEsort_class;PFAM_domains;")
-    out_fhand.write("PFAM_descriptions;TEsort_domains;TEsort_completness;")
-    out_fhand.write("TEsort_strand;DeTEnGA_status\n")
+def write_summary(summary, out_fhand, hogs):
+    out_fhand.write("ProteinID,mRNAID,HOG,Interpro_status,TEsort_class;PFAM_domains,")
+    out_fhand.write("PFAM_descriptions,TEsort_domains,TEsort_completness,")
+    out_fhand.write("TEsort_strand,DeTEnGA_status\n")
     out_fhand.flush()
     for row in summary:
         line_total = "" 
-        line_total += "{};{};{};{};".format(row["transcript"], row["interpro_status"],
-                                            row["tesort_class"], row["pfams_ids"])
-        line_total += "{};{};{};{};{}\n".format(row["pfams_descriptions"].replace(";", ","), row["tesort_domains"],
-                                                row["tesort_complete"], row["tesort_strand"],
-                                                row["detenga_status"])
+        line_total += f'{row["protID"]},{row{"mRNAID"}},'
+        line_total += f'{hogs[row["protID"]]},'
+        line_total += f'{row["interpro_status"]},{row["tesort_class"]},'
+        line_total += f'{row["pfams_ids"]},{row["pfams_descriptions"].replace(";", " ").replace(",", " ")};'
+        line_total += f'{row["tesort_domains"]},{row["tesort_complete"]},'
+        line_total += f'{row["tesort_strand"]},{row["detenga_status"]}\n'
         out_fhand.write(line_total)
         out_fhand.flush()
 
