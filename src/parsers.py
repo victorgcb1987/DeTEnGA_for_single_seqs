@@ -94,6 +94,7 @@ def classify_protein(interpro_classified, tesort_output, equivalences):
 
         transcript_tesort = tesort_output.get(mrna, None)
         if transcript_tesort is not None:
+            print(protein, mrna)
             row["tesort_domains"] = transcript_tesort["domains"]
             row["tesort_complete"] = transcript_tesort["complete"]
             row["tesort_class"] = transcript_tesort["classification"]
