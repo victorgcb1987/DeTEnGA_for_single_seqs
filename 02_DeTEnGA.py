@@ -107,7 +107,7 @@ def main():
     with open(args["metadata"]) as metadata_fhand:
         metadata = read_metadata(metadata_fhand)
 
-    msg = "Checking if all sequences are available"
+    msg = "Checking if all sequences are avaiable"
     emit_message(msg, log_fhand)
     found_sequences, not_found_sequences, messages = search_sequences(metadata, args["input"])
 

@@ -35,45 +35,40 @@ def generate_input_files(sequences, out_fpath):
 
 
 def select_isoform(sequence_dir, protein_sequence, 
-                           mrna_sequence, protein_id="", mrna_id=""):
+                           mrna_sequence, protein_id, mrna_id=""):
 
-    records = SeqIO.parse(protein_sequence, "fasta")
     protein_records = SeqIO.parse(protein_sequence, "fasta")
     for record in protein_records:
         if record.id == protein_id:
-            protein_sequence = 
-    for record in records:
-        protein_sequences_lengths.append(len(record.seq))
-    if len(protein_sequences_lengths) == 1:
-        print(protein_sequence, mrna_sequence)
-        #Sometimes, for only one protein can appear 2 or more transcripts
-        #we are goin to get the first one that is coding (starts with XM)
-        records = SeqIO.parse(mrna_sequence, "fasta")
-        for record in records:
-            if record.id.startswith("XM"):
-                mrna_id = record.id
+            selected_protein_record = record
+            selected_prot_outpath = sequence_dir / "protein_selected_isoform.faa"
+            with open(selected_prot_outpath, "w") as prot_out_fhand:
+                SeqIO.write(selected_protein_record, prot_out_fhand, "fasta")
                 break
-        return protein_sequence, mrna_sequence, mrna_id, ""
     
+    mrna_records = SeqIO.parse(mrna_sequence, "fasta")
+    selected_mrna_outpath = sequence_dir / "mrna_selected_isoform.fna"
+    if mrna_id:
+        for record in mrna_records:
+            if record.id == mrna_id:
+                selected_mrna_record = record
+                break
     else:
-        longest_isoform = protein_sequences_lengths.index(max(protein_sequences_lengths))
-        longest_prot_path = sequence_dir / "protein_longest_isoform.faa"
-        with open(longest_prot_path, "w") as prot_out_fhand:
-            records = [record for record in SeqIO.parse(protein_sequence, "fasta")]
-            longest_isoform = records[longest_isoform]
-            prot_id = longest_isoform.id
-            SeqIO.write(longest_isoform, prot_out_fhand, "fasta")
-            print(record.description)
-            transcript = f'transcript={record.description.split()[-1].split("=")[-1][:-1]}'
-        longest_mrna_path = sequence_dir / "mrna_longest_isoform.fna"
-        with open(longest_mrna_path, "w") as mrna_out_fhand:
-            records = SeqIO.parse(mrna_sequence, "fasta")
-            for record in records:
-                print(transcript, record.description)
-                if transcript in record.description:
-                    SeqIO.write(record, mrna_out_fhand, "fasta")
-                    mrna_id = record.id
-        return longest_prot_path, longest_mrna_path, mrna_id, prot_id
+        mrna_lengths = []
+        mrna_records = []
+        #Sometimes, for only one protein can appear non coding transcripts
+        #we are going to get the coding ones (starts with XM)
+        for record in mrna_records:
+            if record.id.startswith("XM"):
+                mrna_records.append(record)
+                mrna_lengths.append(len(record.seq))
+        longest_idx = mrna_lengths.index(max(mrna_lengths))
+        selected_mrna_record = mrna_records[longest_idx]
+
+        with open(selected_mrna_outpath, "w") as prot_out_fhand:
+            SeqIO.write(selected_mrna_record, prot_out_fhand, "fasta")
+
+        return selected_prot_outpath, selected_mrna_outpath, selected_mrna_record.id
 
 
 def search_sequences(metadata, input_dir):
@@ -88,14 +83,14 @@ def search_sequences(metadata, input_dir):
             mrna_sequence = sequence_dir / "rna.fna"
 
             if mrna_sequence.is_file() and protein_sequence.is_file():
-                protein_sequence, mrnaID = select_isoform(sequence_dir, 
-                                                          protein_sequence, 
-                                                          mrna_sequence,
-                                                          protein_id=member["proteinID"],
-                                                          mrna_id=member["mRNAID"])
+                selected_protein_sequence, selected_mrna_sequence,  mrnaID = select_isoform(sequence_dir, 
+                                                                                            protein_sequence, 
+                                                                                            mrna_sequence,
+                                                                                            member["proteinID"],
+                                                                                            mrna_id=member["mRNAID"])
                
-                member.update({"protein": protein_sequence,
-                               "mrna": mrna_sequence,
+                member.update({"protein": selected_protein_sequence,
+                               "mrna": selected_mrna_sequence,
                                "main_dir": sequence_dir,
                                "mrnaID": mrnaID})
                 
