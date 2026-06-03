@@ -116,6 +116,7 @@ def classify_protein(interpro_classified, tesort_output, equivalences):
 
 
 def detenga_status(row):
+    print(row["interpro_status"], row["tesort_domains"])
     status = "NA"
     if row["interpro_status"] == "coding_sequence" and row["tesort_domains"] == "NA":
         status = "PcpM0" 
