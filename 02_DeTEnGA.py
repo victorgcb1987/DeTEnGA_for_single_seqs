@@ -188,6 +188,7 @@ def main():
     for kingdom in analysis_outputs:
         database = REXDB_PFAMS[TRANSLATION[kingdom]]
         TE_pfams = get_pfams_from_db(database)
+        print(TE_pfams)
 
 
 
