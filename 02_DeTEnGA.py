@@ -186,6 +186,7 @@ def main():
 
 
     for kingdom, outputs in analysis_outputs.items():
+        print(outputs)
         if "TEsorter" not in outputs or "interpro" not in outputs:
             msg = f'Missing analysis for {kingdom}. Skipping'
             emit_message(msg, log_fhand)
