@@ -196,7 +196,7 @@ def add_equivalences_to_metadata(metadata, equivalences, out_dir):
         header = "Genome,HOG,Protein,mRNA,SpName,Kingdom,Category\n"
         out_fhand.write(header)
         with open(metadata) as metadata_fhand:
-            for row in csv.DictReader(metadata_fhand, delimiter="\t"):
+            for row in csv.DictReader(metadata_fhand, delimiter=","):
                 genome = row["Genome"]
                 hog = row["HOG"]
                 protein = row["Protein"]
