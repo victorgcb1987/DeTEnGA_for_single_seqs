@@ -82,7 +82,6 @@ def classify_protein(interpro_classified, tesort_output, equivalences):
             for value in interpro_classified[protein]:
                 pfams_ids.append(value[0])
                 pfams_descriptions.append(value[1])
-                print(protein, value)
                 if "TE" in value:
                     transposable = True
                 if "NT" in value:
