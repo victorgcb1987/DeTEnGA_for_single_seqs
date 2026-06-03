@@ -121,6 +121,12 @@ def main():
     emit_message(msg, log_fhand)
     for kind, fpath in input_fpaths.items():
         if kind.startswith("mrna_"):
+
+            if os.path.getsize(fpath) == 0:
+                msg = f'mRNA file {fpath} is empty. Skipping TEsorter analysis'
+                emit_message(msg, log_fhand)
+                continue
+            
             kingdom = kind.split("_")[-1]
             if kingdom == "viridiplantae":
                 rex_db = "rexdb-plant"

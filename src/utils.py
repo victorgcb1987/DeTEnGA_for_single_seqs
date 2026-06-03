@@ -5,7 +5,7 @@ def _group_sequences(sequences, out_fpaths):
     fhands = {taxa: open(fpath, "w") for taxa, fpath in out_fpaths.items()}
     for hog, members in sequences.items():
         for member in members:
-            print(member["kingdom"])
+
             fhand_mrna = fhands.get(f'mrna_{member["kingdom"]}', fhands["mrna_other"])
             fhand_protein = fhands.get(f'protein_{member["kingdom"]}', fhands["protein_other"])
             
