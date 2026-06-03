@@ -55,7 +55,7 @@ def select_isoform(sequence_dir, protein_sequence,
             protein_seqs.append(record)
             protein_lengths.append(len(record.seq))
         longest_idx = protein_lengths.index(max(protein_lengths))
-        selected_mrna_record = protein_seqs[longest_idx]
+        selected_protein_record = protein_seqs[longest_idx]
 
     with open(selected_prot_outpath, "w") as prot_out_fhand:
         SeqIO.write(selected_protein_record, prot_out_fhand, "fasta")
