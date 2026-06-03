@@ -62,6 +62,7 @@ def select_isoform(sequence_dir, protein_sequence,
         #Sometimes, for only one protein can appear non coding transcripts
         #we are going to get the coding ones (starts with XM)
         for record in mrna_records:
+            print(record.id)
             if record.id.startswith("XM"):
                 mrna_records.append(record)
                 mrna_lengths.append(len(record.seq))
