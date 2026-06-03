@@ -149,7 +149,7 @@ def write_summary(summary, out_fhand, hogs):
     out_fhand.flush()
     for row in summary:
         line_total = "" 
-        line_total += f'{row["protID"]},{row{"mRNAID"}},'
+        line_total += f'{row["protID"]},{row["mRNAID"]},'
         line_total += f'{hogs[row["protID"]]},'
         line_total += f'{row["interpro_status"]},{row["tesort_class"]},'
         line_total += f'{row["pfams_ids"]},{row["pfams_descriptions"].replace(";", " ").replace(",", " ")};'
