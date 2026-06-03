@@ -74,7 +74,6 @@ def classify_protein(interpro_classified, tesort_output, equivalences):
         if protein not in interpro_classified:
             status = "NA"
         else:
-            print(protein)
             transposable = False
             no_transposable = False
             pfams_ids = []

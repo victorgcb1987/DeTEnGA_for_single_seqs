@@ -208,7 +208,8 @@ def main():
                         equivalences[member["proteinID"]] = member["mrnaID"]
             protein_class = classify_protein(classified_pfams, te_sorter_output, 
                                              equivalences)
-            print(protein_class)
+            for row in protein_class:
+                print(row)
         
 
 
