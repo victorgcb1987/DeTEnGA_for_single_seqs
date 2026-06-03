@@ -17,6 +17,10 @@ REXDB_PFAMS = {"rexdb-plant": Path(os.path.dirname(os.path.realpath(__file__))) 
                "rexdb-metazoa": Path(os.path.dirname(os.path.realpath(__file__))) / "data" / "Metazoa_3.1_pfams.txt",
                "rexdb": Path(os.path.dirname(os.path.realpath(__file__))) / "data" / "Combined_pfams.txt"}
 
+TRANSLATION = {"viridiplantae": "rexdb-plant",
+               "metazoa": "rexdb-metazoa",
+               "fungi": "rexdb",
+               "other": "rexdb"}
 
 CATEGORIES = {"No_TE(PcpM0)": "PcpM0", "Protein_TE_only(PteM0)": "PteM0",
               "Chimeric_Protein_Only(PchM0)": "PchM0", "mRNA_TE_Only(PcpMte)": "PcpMte",
@@ -181,7 +185,10 @@ def main():
 
 
 
-    print(analysis_outputs)
+    for kingdom in analysis_outputs:
+        database = REXDB_PFAMS[TRANSLATION[kingdom]]
+        TE_pfams = get_pfams_from_db(database)
+
 
 
 
@@ -199,9 +206,7 @@ def main():
     
     
     
-    database = REXDB_PFAMS[database]
-    TE_pfams = get_pfams_from_db(database)
-
+    
     #         with open(TEsorter_results["out_fpath"]) as TEsorter_fhand:
     #             te_sorter_output = parse_TEsort_output(TEsorter_fhand)
         
