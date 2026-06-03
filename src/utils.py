@@ -7,7 +7,7 @@ def _group_sequences(sequences, out_fpaths):
         for member in members:
             print(member["kingdom"])
             fhand_mrna = fhands.get(f'mrna_{member["kingdom"]}', fhands["mrna_other"])
-            fhand_protein = fhands.get(f'protein{member["kingdom"]}', fhands["protein_other"])
+            fhand_protein = fhands.get(f'protein_{member["kingdom"]}', fhands["protein_other"])
             
             mrna_record = SeqIO.read(member["mrna"], "fasta")
             SeqIO.write(mrna_record, fhand_mrna, "fasta")
