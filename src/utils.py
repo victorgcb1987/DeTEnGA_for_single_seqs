@@ -61,6 +61,7 @@ def select_isoform(sequence_dir, protein_sequence,
         mrna_records = []
         #Sometimes, for only one protein can appear non coding transcripts
         #we are going to get the coding ones (starts with XM)
+        mrna_records = SeqIO.parse(mrna_sequence, "fasta")
         for record in mrna_records:
             print(record.id)
             if record.id.startswith("XM"):
