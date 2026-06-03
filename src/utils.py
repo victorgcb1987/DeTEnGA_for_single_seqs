@@ -5,16 +5,16 @@ def _group_sequences(sequences, out_fpaths):
     fhands = {taxa: open(fpath, "w") for taxa, fpath in out_fpaths.items()}
     for hog, members in sequences.items():
         for member in members:
-            print(member)
+            print(member["kingdom"])
             fhand_mrna = fhands.get(f'mrna_{member["kingdom"]}', fhands["mrna_other"])
             fhand_protein = fhands.get(f'protein{member["kingdom"]}', fhands["protein_other"])
             
-            records_mrna = SeqIO.index(member["mrna"], "fasta")
-            SeqIO.write(records_mrna[member["mrnaID"]], fhand_mrna, "fasta")
+            mrna_record = SeqIO.read(member["mrna"], "fasta")
+            SeqIO.write(mrna_record, fhand_mrna, "fasta")
 
-            records_protein = SeqIO.index(member["protein"], "fasta")
-            print(member)
-            SeqIO.write(records_protein[member["proteinID"]], fhand_protein, "fasta")
+            protein_record = SeqIO.read(member["protein"], "fasta")
+            SeqIO.write(protein_record, fhand_protein, "fasta")
+
     for kingdom, fhand in fhands.items():
         fhand.flush()
         fhand.close()
