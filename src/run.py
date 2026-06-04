@@ -54,11 +54,8 @@ def run_TEsorter(input_mrna, database, threads):
     results = {}
     out_mrna = Path("{}.{}.cls.tsv".format(input_mrna, database))
     os.chdir(out_mrna.parents[0].absolute())
-    if database == "rexdb":
-        #it will run an combination of viridiplantae and Metazoa
-        cmd = f'TEsorter {input_mrna.name} -p {threads}'
-    else:
-        cmd = f'TEsorter {input_mrna.name} -db {database} -p {threads}'
+ 
+    cmd = f'TEsorter {input_mrna.name} -db {database} -p {threads}'
 
     if Path(out_mrna.name).exists():
         returncode = 99
