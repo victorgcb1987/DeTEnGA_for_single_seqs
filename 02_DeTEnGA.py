@@ -167,7 +167,7 @@ def main():
             else:
                 stop_codons_out = remove_stop_codons(fpath)
                 analysis_outputs[kingdom]["no_stop_proteins"] = stop_codons_out
-
+    print(analysis_outputs)
     msg = "Analyze protein domains with interproscan"
     emit_message(msg, log_fhand)
     for kingdom in analysis_outputs:
