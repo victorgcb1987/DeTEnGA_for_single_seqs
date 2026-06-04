@@ -92,7 +92,7 @@ def select_isoform(sequence_dir, protein_sequence,
 def search_sequences(metadata, input_dir):
     messages = []
     found_sequences = {hog: [] for hog in metadata}
-    not_found_sequences = found_sequences.copy()
+    not_found_sequences = {hog: [] for hog in metadata}
     for hog, members in metadata.items():
         hog_dir = input_dir / hog
         for member in members:
