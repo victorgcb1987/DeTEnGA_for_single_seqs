@@ -185,7 +185,7 @@ def main():
         else:
             msg = f'No stop codon file for {kingdom} found. Skipping InterProScan analysis'
 
-
+    print(analysis_outputs)
     for kingdom, outputs in analysis_outputs.items():
         if "TEsorter" not in outputs or "interpro" not in outputs:
             msg = f'Missing analysis for {kingdom}. Skipping'
