@@ -122,6 +122,7 @@ def run_interpro(sequence, threads):
     base_dir = Path(os.getcwd())
     
     os.chdir(sequence.parents[0].absolute())
+    print(out_fpath.name)
     out_fpath = Path(f'{sequence}.tsv')
     log_fpath = Path(f'{out_fpath.stem}_interpro.log.txt')
     cmd = f'interproscan.sh -i {sequence.name} -cpu {threads} '
