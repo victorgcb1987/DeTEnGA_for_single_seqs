@@ -139,7 +139,7 @@ def main():
             elif kingdom == "metazoa":
                 rex_db = "rexdb-metazoa"
             else:
-                rex_db = "rex-db"
+                rex_db = "rexdb"
             TEsorter_results = run_TEsorter(fpath, rex_db, args["threads"])
             if TEsorter_results["returncode"] == 99:
                 msg = f'TEsorter already done for {kingdom}. Skipping Tesorter analysis'
