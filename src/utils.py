@@ -77,7 +77,6 @@ def select_isoform(sequence_dir, protein_sequence,
         #we are going to get the coding ones (starts with XM)
         mrna_records = SeqIO.parse(mrna_sequence, "fasta")
         for record in mrna_records:
-            print(record.id)
             if not record.id.startswith("Y"):
                 mrna_seqs.append(record)
                 mrna_lengths.append(len(record.seq))
@@ -97,7 +96,6 @@ def search_sequences(metadata, input_dir):
     for hog, members in metadata.items():
         hog_dir = input_dir / hog
         for member in members:
-            print(hog, member)
             sequence_dir = hog_dir / member["proteinID"] / "seqs"
             protein_sequence = sequence_dir / "protein.faa"
             mrna_sequence = sequence_dir / "rna.fna"
