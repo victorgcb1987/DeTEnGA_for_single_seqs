@@ -167,12 +167,12 @@ def main():
             else:
                 stop_codons_out = remove_stop_codons(fpath)
                 analysis_outputs[kingdom]["no_stop_proteins"] = stop_codons_out
-    print(analysis_outputs)
+
     msg = "Analyze protein domains with interproscan"
     emit_message(msg, log_fhand)
     for kingdom in analysis_outputs:
         if "no_stop_proteins" in analysis_outputs[kingdom]:
-            interpro_results = run_interpro(stop_codons_out, args["threads"])
+            interpro_results = run_interpro(analysis_outputs[kingdom]["no_stop_proteins"], args["threads"])
             if interpro_results["returncode"] == 99:
                 msg = 'InterproScan already done. Skipping Interpro analysis'
                 analysis_outputs[kingdom]["interpro"] = interpro_results["out_fpath"]
@@ -185,7 +185,7 @@ def main():
         else:
             msg = f'No stop codon file for {kingdom} found. Skipping InterProScan analysis'
 
-    print(analysis_outputs)
+
     for kingdom, outputs in analysis_outputs.items():
         if "TEsorter" not in outputs or "interpro" not in outputs:
             msg = f'Missing analysis for {kingdom}. Skipping'
