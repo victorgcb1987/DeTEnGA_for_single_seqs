@@ -115,5 +115,6 @@ def search_sequences(metadata, input_dir):
                 found_sequences[hog].append(member)
 
             else:
+                messages.append(f'{hog} {member["proteinID"]} not found')
                 not_found_sequences[hog].append(member)
     return found_sequences, not_found_sequences, messages

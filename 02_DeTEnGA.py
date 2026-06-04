@@ -117,8 +117,8 @@ def main():
 
         
 
-    for msg in messages:
-        emit_message(msg, log_fhand)
+    for message in messages:
+        emit_message(message, log_fhand)
 
     input_fpaths = generate_input_files(found_sequences, out_dir)
 
