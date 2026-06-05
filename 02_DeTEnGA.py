@@ -196,7 +196,7 @@ def main():
         with open(outputs["TEsorter"]) as TEsorter_fhand:
             te_sorter_output = parse_TEsort_output(TEsorter_fhand)
 
-        with open(outputs["interpro"]["out_fpath"]) as interpro_fhand:
+        with open(outputs["interpro"]) as interpro_fhand:
             database = REXDB_PFAMS[TRANSLATION[kingdom]]
             TE_pfams = get_pfams_from_db(database)
             interpro = get_pfams_from_interpro_query(interpro_fhand)
