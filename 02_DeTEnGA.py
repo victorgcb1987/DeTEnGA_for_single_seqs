@@ -100,6 +100,7 @@ def emit_message(msg, fhand):
 
 def main():
     args = get_arguments()
+
     out_dir = args["out"]
     if not out_dir.exists():
         out_dir.mkdir(parents=True, exist_ok=True)
@@ -185,6 +186,8 @@ def main():
         else:
             msg = f'No stop codon file for {kingdom} found. Skipping InterProScan analysis'
 
+    all_class = []
+    all_hogs = {}
 
     for kingdom, outputs in analysis_outputs.items():
         if "TEsorter" not in outputs or "interpro" not in outputs:
@@ -208,11 +211,13 @@ def main():
                         equivalences[member["proteinID"]] = member["mrnaID"]
             protein_class = classify_protein(classified_pfams, te_sorter_output, 
                                              equivalences)
+            all_class += protein_class
             hogs = {}
             for hog, members in found_sequences.items():
                  for member in members:
                      if member["kingdom"] == kingdom:
                         hogs[member["proteinID"]] = hog
+                        all_hogs[member["proteinID"]] = hog
             out_fpath = Path(out_dir / f'{kingdom}_TE_summary.csv')
             with open(out_fpath, "w") as out_fhand:
                 write_summary(protein_class, out_fhand, hogs)
@@ -220,6 +225,12 @@ def main():
             out_fpath = Path(out_dir / f'{kingdom}_TE_summary_grouped_by_HOG.csv')
             with open(out_fpath, "w") as out_fhand:
                 write_summary_grouped_by_HOG(protein_class, out_fhand, hogs)
+      
+    out_fpath = Path(out_dir / f'TE_summary_grouped_by_HOG.csv')
+    with open(out_fpath, "w") as out_fhand:
+        write_summary_grouped_by_HOG(all_class, out_fhand, all_hogs)
+
+        
 
             
            
