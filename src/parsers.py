@@ -198,9 +198,9 @@ def write_summary_grouped_by_HOG(protein_classification, summary_out_fhand, hogs
                 tes_total = []
                 tes_total.append(str(round(float(value/results["Total"]), 3)*100)[0:5])
                 if results["Total"] != results["P0M0"]:
-                    row.append(str(round(float(value/(results["Total"]-results["P0M0"])), 3)*100)[0:5])
+                    tes_total.append(str(round(float(value/(results["Total"]-results["P0M0"])), 3)*100)[0:5])
                 else:
-                    row.append("0")
+                    tes_total.append("0")
                 
             else:
                 row.append(str(value))
@@ -211,6 +211,8 @@ def write_summary_grouped_by_HOG(protein_classification, summary_out_fhand, hogs
                     row.append("100")
                 else:
                     row.append("0")
+        for value in tes_total:
+            row.append(value)
         
         summary_out_fhand.write(",".join(row) + "\n")
 
