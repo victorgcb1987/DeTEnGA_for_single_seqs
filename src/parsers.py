@@ -171,7 +171,7 @@ def write_summary_grouped_by_HOG(protein_classification, summary_out_fhand, hogs
         hog = hogs[protein["ProtID"]]
         if hog not in hogs_group:
             hogs_group[hog] = {category : 0 for category in detenga_class}
-        if protein["detenga_status"] not in hogs[hog]:
+        if protein["detenga_status"] not in detenga_class:
             hogs_group[hog]["Other"] += 1
         else:
             hogs_group[hog][protein["detenga_status"]] += 1
