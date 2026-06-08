@@ -184,13 +184,13 @@ def write_summary_grouped_by_HOG(protein_classification, summary_out_fhand, hogs
     summary_out_fhand.write(",".join(header)+"\n")
     for hog, results in hogs_group.items():
         print(hog, results)
-        row = [hog, results["Total"]]
+        row = [hog, str(results["Total"])]
         for result, value in results.items():
             if result == "Total":
                 continue
             else:
-                row.append(value)
-                row.append(round(float(value/results["Total"]))*100)
+                row.append(str(value))
+                row.append(round(str(float(value/results["Total"]))*100))
         summary_out_fhand.write(",".join(row) + "\n")
 
         
