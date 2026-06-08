@@ -194,8 +194,10 @@ def write_summary_grouped_by_HOG(protein_classification, summary_out_fhand, hogs
                 row.append(str(round(float(value/results["Total"]), 3)*100)[0:5])
                 if results["Total"] != results["P0M0"]:
                     row.append(str(round(float(value/(results["Total"]-results["P0M0"])), 3)*100)[0:5])
-                else:
+                elif result == "P0M0":
                     row.append("100")
+                else:
+                    row.append("0")
         summary_out_fhand.write(",".join(row) + "\n")
 
         
