@@ -166,22 +166,23 @@ def write_summary(summary, out_fhand, hogs):
 
 def write_summary_grouped_by_HOG(protein_classification, summary_out_fhand, hogs):
     detenga_class = ["PcpM0", "PteMte", "P0Mte", "P0M0", "Other", "Total"]  
+    hogs_group = {}
     for protein in protein_classification:
         hog = hogs[protein["ProtID"]]
-        if hog not in hogs:
-            hogs[hog] = {category : 0 for category in detenga_class}
+        if hog not in hogs_group:
+            hogs_group[hog] = {category : 0 for category in detenga_class}
         if protein["detenga_status"] not in hogs[hog]:
-            hogs[hog]["Other"] += 1
+            hogs_group[hog]["Other"] += 1
         else:
-            hogs[hog][protein["detenga_status"]] += 1
-        hogs[hog]["Total"] += 1
+            hogs_group[hog][protein["detenga_status"]] += 1
+        hogs_group[hog]["Total"] += 1
     header = ["HOG", "Total_Sequences"]
     for category in detenga_class:
         if category != "Total":
             header.append(f'{category} (N)')
             header.append(f'{category} (%)')
     summary_out_fhand.write(",".join(header)+"\n")
-    for hog, results in hogs.items():
+    for hog, results in hogs_group.items():
         print(hog, results)
         row = [hog, results["Total"]]
         for result, value in results.items():
