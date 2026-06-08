@@ -157,7 +157,7 @@ def write_summary(summary, out_fhand, hogs):
         line_total += f'{row["ProtID"]},{row["mRNAID"]},'
         line_total += f'{hogs[row["ProtID"]]},'
         line_total += f'{row["interpro_status"]},{row["tesort_class"]},'
-        line_total += f'{row["pfams_ids"]},{row["pfams_descriptions"].replace(";", " ").replace(",", " ")};'
+        line_total += f'{row["pfams_ids"]},{row["pfams_descriptions"].replace(";", " ").replace(",", " ")},'
         line_total += f'{row["tesort_domains"]},{row["tesort_complete"]},'
         line_total += f'{row["tesort_strand"]},{row["detenga_status"]}\n'
         out_fhand.write(line_total)
