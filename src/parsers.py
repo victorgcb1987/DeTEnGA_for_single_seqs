@@ -164,18 +164,33 @@ def write_summary(summary, out_fhand, hogs):
         out_fhand.flush()
 
 
-def get_stats(agat_stats, summary):
-    with open(agat_stats) as agat_fhand:
-        text = agat_fhand.read()
-        try:
-            match = re.search(r"Number of mrna\s+(\d+)", text, re.IGNORECASE)
-            num_transcripts = int(match.group(1))
-        except:
-            match = re.search(r"Number of transcript\s+(\d+)", text, re.IGNORECASE)
-            num_transcripts = int(match.group(1))
-    stats = {"PcpM0": 0, "PteM0": 0, "PchM0": 0, 
-             "PcpMte": 0, "PteMte": 0, "PchMte": 0, 
-             "P0Mte":0, "P0M0":0, "num_transcripts": num_transcripts}
-    for row in DictReader(open(summary), delimiter=";"):
-        stats[row["DeTEnGA_status"]] += 1
-    return stats
+def write_summary_grouped_by_HOG(protein_classification, summary_out_fhand, hogs):
+    detenga_class = ["PcpM0", "PteMte", "P0Mte", "P0M0", "Other", "Total"]
+    for protein, features in protein_classification.items():
+        hog = hogs[protein]
+        if hog not in hogs:
+            hogs[hog] = {category : 0 for category in detenga_class}
+        if features["detenga_status"] not in hogs[hog]:
+            hogs[hog]["Other"] += 1
+        else:
+            hogs[hog][features["detenga_status"]] += 1
+        hogs[hog]["Total"] += 1
+    header = ["HOG", "Total_Sequences"]
+    for category in detenga_class:
+        if category != "Total":
+            header.append(f'{category} (N)')
+            header.append(f'{category} (%)')
+    summary_out_fhand.write(",".join(header)+"\n")
+    for hog, results in hogs.items():
+        row = [hog, results["Total"]]
+        for result, value in results.items():
+            if result == "Total":
+                continue
+            else:
+                row.append(value)
+                row.append(round(float(value/results["Total"]))*100)
+        summary_out_fhand.write(",".join(row) + "\n")
+
+        
+    
+

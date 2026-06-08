@@ -8,8 +8,8 @@ from pathlib import Path
 
 from src.parsers import (get_pfams_from_db, get_pfams_from_interpro_query, 
                          parse_TEsort_output, classify_pfams, classify_protein, write_summary,
-                         get_stats, read_metadata)
-from src.run import run_TEsorter, remove_stop_codons, run_interpro, run_agat
+                         write_summary, read_metadata)
+from src.run import run_TEsorter, remove_stop_codons, run_interpro
 
 from src.utils import search_sequences, generate_input_files
 
@@ -216,6 +216,12 @@ def main():
             out_fpath = Path(out_dir / f'{kingdom}_TE_summary.csv')
             with open(out_fpath, "w") as out_fhand:
                 write_summary(protein_class, out_fhand, hogs)
+
+            out_fpath = Path(out_dir / f'{kingdom}_TE_summary_grouped_by_HOG.csv')
+            with open(out_fpath, "w") as out_fhand:
+                write_summary(protein_class, out_fhand, hogs)
+
+            
            
 if __name__ == "__main__":
     main()
