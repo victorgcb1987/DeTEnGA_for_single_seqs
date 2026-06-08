@@ -190,7 +190,7 @@ def write_summary_grouped_by_HOG(protein_classification, summary_out_fhand, hogs
                 continue
             else:
                 row.append(str(value))
-                row.append(round(str(float(value/results["Total"]))*100))
+                row.append(str(round(float(value/results["Total"]))*100))
         summary_out_fhand.write(",".join(row) + "\n")
 
         
