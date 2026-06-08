@@ -181,6 +181,7 @@ def write_summary_grouped_by_HOG(protein_classification, summary_out_fhand, hogs
         if category != "Total":
             header.append(f'{category} (N)')
             header.append(f'{category} (%)')
+            header.append(f'{category} NO P0M0 (%)')
     summary_out_fhand.write(",".join(header)+"\n")
     for hog, results in hogs_group.items():
         print(hog, results)
@@ -191,6 +192,10 @@ def write_summary_grouped_by_HOG(protein_classification, summary_out_fhand, hogs
             else:
                 row.append(str(value))
                 row.append(str(round(float(value/results["Total"]), 3)*100)[0:5])
+                if results["Total"] != results["P0M0"]:
+                    row.append(str(round(float(value/(results["Total"]-results["P0M0"]), 3)*100)[0:5]))
+                else:
+                    row.append("100")
         summary_out_fhand.write(",".join(row) + "\n")
 
         
