@@ -194,7 +194,7 @@ def write_summary_grouped_by_HOG(protein_classification, summary_out_fhand, hogs
         for result, value in results.items():
             if result == "Total":
                 continue
-            elif results == "Total_TEs":
+            elif result == "Total_TEs":
                 tes_total = []
                 tes_total.append(str(round(float(value/results["Total"]), 3)*100)[0:5])
                 if results["Total"] != results["P0M0"]:
