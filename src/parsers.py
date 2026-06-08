@@ -181,11 +181,11 @@ def write_summary_grouped_by_HOG(protein_classification, summary_out_fhand, hogs
     header = ["HOG", "Total_Sequences"]
     for category in detenga_class:
         if category != "Total":
-            header.append(f'{category} (N)')
+            if category != "Total_TEs":
+                header.append(f'{category} (N)')
             header.append(f'{category} (%)')
             header.append(f'{category} NO P0M0 (%)')
-    header.append("Total TEs (%)")
-    header.append("Total TEs (%) NO P0M0 (%)")
+
 
     summary_out_fhand.write(",".join(header)+"\n")
     for hog, results in hogs_group.items():
