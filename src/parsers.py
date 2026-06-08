@@ -166,6 +166,7 @@ def write_summary(summary, out_fhand, hogs):
 
 def write_summary_grouped_by_HOG(protein_classification, summary_out_fhand, hogs):
     detenga_class = ["PcpM0", "PteMte", "P0Mte", "P0M0", "Other", "Total"]
+    print(protein_classification)
     for protein, features in protein_classification.items():
         hog = hogs[protein]
         if hog not in hogs:
