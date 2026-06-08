@@ -165,7 +165,7 @@ def write_summary(summary, out_fhand, hogs):
 
 
 def write_summary_grouped_by_HOG(protein_classification, summary_out_fhand, hogs):
-    detenga_class = ["PcpM0", "PteMte", "P0Mte", "P0M0", "Other", "Total"]  
+    detenga_class = ["PcpM0", "PteMte", "P0Mte", "P0M0", "Other", "Total", "Total_TEs"]  
     hogs_group = {}
     for protein in protein_classification:
         hog = hogs[protein["ProtID"]]
@@ -176,12 +176,16 @@ def write_summary_grouped_by_HOG(protein_classification, summary_out_fhand, hogs
         else:
             hogs_group[hog][protein["detenga_status"]] += 1
         hogs_group[hog]["Total"] += 1
+        if protein["detenga_status"] == "PteMte" or protein["detenga_status"] == "P0Mte":
+            hogs_group[hog]["Total_TEs"] += 1
     header = ["HOG", "Total_Sequences"]
     for category in detenga_class:
         if category != "Total":
             header.append(f'{category} (N)')
             header.append(f'{category} (%)')
             header.append(f'{category} NO P0M0 (%)')
+    header.append("Total TEs (%)")
+    header.append("Total TEs (%) NO P0M0 (%)")
 
     summary_out_fhand.write(",".join(header)+"\n")
     for hog, results in hogs_group.items():
@@ -190,6 +194,14 @@ def write_summary_grouped_by_HOG(protein_classification, summary_out_fhand, hogs
         for result, value in results.items():
             if result == "Total":
                 continue
+            elif results == "Total_TEs":
+                tes_total = []
+                tes_total.append(str(round(float(value/results["Total"]), 3)*100)[0:5])
+                if results["Total"] != results["P0M0"]:
+                    row.append(str(round(float(value/(results["Total"]-results["P0M0"])), 3)*100)[0:5])
+                else:
+                    row.append("0")
+                
             else:
                 row.append(str(value))
                 row.append(str(round(float(value/results["Total"]), 3)*100)[0:5])
@@ -199,6 +211,7 @@ def write_summary_grouped_by_HOG(protein_classification, summary_out_fhand, hogs
                     row.append("100")
                 else:
                     row.append("0")
+        
         summary_out_fhand.write(",".join(row) + "\n")
 
         
