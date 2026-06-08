@@ -102,7 +102,7 @@ def classify_protein(interpro_classified, tesort_output, equivalences):
         if transcript_tesort is not None:
             row["tesort_domains"] = transcript_tesort["domains"]
             row["tesort_complete"] = transcript_tesort["complete"]
-            row["tesort_class"] = transcript_tesort["classification"]
+            row["tesort_class"] = transcript_tesort["classification"].replace(",", " ")
             row["tesort_strand"] = transcript_tesort["strand"]
         else:
             row["tesort_domains"] = "NA"
@@ -148,7 +148,7 @@ def detenga_status(row):
 
 
 def write_summary(summary, out_fhand, hogs):
-    out_fhand.write("ProteinID,mRNAID,HOG,Interpro_status,TEsort_class;PFAM_domains,")
+    out_fhand.write("ProteinID,mRNAID,HOG,Interpro_status,TEsort_class,PFAM_domains,")
     out_fhand.write("PFAM_descriptions,TEsort_domains,TEsort_completness,")
     out_fhand.write("TEsort_strand,DeTEnGA_status\n")
     out_fhand.flush()
