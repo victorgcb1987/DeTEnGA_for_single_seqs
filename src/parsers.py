@@ -182,7 +182,7 @@ def write_summary_grouped_by_HOG(protein_classification, summary_out_fhand, hogs
             header.append(f'{category} (N)')
             header.append(f'{category} (%)')
             header.append(f'{category} NO P0M0 (%)')
-            header.append(f'{category} NO P0M0, NO Others (%)')
+            header.append(f'{category} NO P0M0 NO Others (%)')
 
     summary_out_fhand.write(",".join(header)+"\n")
     for hog, results in hogs_group.items():
