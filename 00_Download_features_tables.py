@@ -108,17 +108,20 @@ def download_feature_tables(ftp_links, out_dir):
 
 def retrive_equivalence_info(feature_table):
     equivalences = {}
-    with gzip.open(feature_table, "rt") as feat_fhand:
-        for line in feat_fhand:
-            if line.startswith("#") or not line:
-                continue
-            else:
-                line = line.rstrip().split("\t")
-                feat = line[0]
-                if feat == "mRNA":
-                    mrnaID = line[10]
-                    proteinID = line[12]
-                    equivalences[proteinID] = mrnaID
+    try:
+        with gzip.open(feature_table, "rt") as feat_fhand:
+            for line in feat_fhand:
+                if line.startswith("#") or not line:
+                    continue
+                else:
+                    line = line.rstrip().split("\t")
+                    feat = line[0]
+                    if feat == "mRNA":
+                        mrnaID = line[10]
+                        proteinID = line[12]
+                        equivalences[proteinID] = mrnaID
+    except:
+        equivalences["failed"] = "failed"
     return equivalences
 
 
