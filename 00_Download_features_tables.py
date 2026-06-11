@@ -209,7 +209,7 @@ def add_equivalences_to_metadata(metadata, equivalences, out_dir):
                     mRNA = ""
                 species = row["SpName"]
                 kingdom = row["Kingdom"]
-                category = row["Category"]
+                category = row.get("Category", "")
                 out_fhand.write(f'{genome},{hog},{protein},{mRNA},{species},{kingdom},{category}\n')
                 out_fhand.flush()
     return outfile
